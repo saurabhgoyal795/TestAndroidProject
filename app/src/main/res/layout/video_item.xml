@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="6dp"
+    app:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="4dp">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@drawable/video_placeholder"
+                android:scaleType="fitXY"
+                android:transitionName="videoImage" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:layout_margin="5dp"
+                android:maxLines="2"
+                android:text="title"
+                android:alpha=".87"
+                android:textColor="@color/ca_blue"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text=""
+                android:alpha=".54"
+                android:textColor="@color/ca_blue"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:id="@+id/query"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:tint="@android:color/holo_blue_light"
+                    android:src="@drawable/baseline_help_black_18"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:gravity="center"
+                    android:text="Raise Query"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/newVideos"
+            android:layout_width="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_height="wrap_content"
+            android:text="NEW"
+            android:visibility="gone"
+            android:textSize="10sp"
+            android:textColor="@color/colorPrimary"
+            android:padding="5dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/button_white_2dp"/>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
