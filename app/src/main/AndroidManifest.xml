@@ -28,15 +28,6 @@
             android:name="com.averda.online.ContactUsActivity"
             android:label="@string/title_activity_contact_us"
             android:theme="@style/AppTheme.FullScreen"></activity>
-        <activity
-            android:name="com.averda.online.mypackage.onlineClass.MyPackageClassDetailsActivity"
-            android:label="@string/title_activity_my_package_class_details"
-            android:theme="@style/AppTheme.FullScreen" />
-
-        <activity
-            android:name="com.averda.online.freecourses.FreeCoursesActivity"
-            android:label="Free Packages"
-            android:theme="@style/AppTheme.FullScreen" />
 
         <activity
             android:name="com.averda.online.SplashActivity"
@@ -66,21 +57,6 @@
             android:label="@string/title_activity_test_series_pan"
             android:theme="@style/AppTheme.FullScreen" />
         <activity
-            android:name="com.averda.online.publication.PublicationActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="Publications"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.news.NewsActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="Latest News"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.offers.OfferActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="Latest Offers"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
             android:name="com.averda.online.classes.SubjectsActivity"
             android:configChanges="orientation|screenSize"
             android:label="Latest News"
@@ -89,16 +65,6 @@
             android:name="com.averda.online.profile.TransactionActivity"
             android:configChanges="orientation|screenSize"
             android:label="My Transactions"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.notification.NotificationActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="Notifications"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.publication.PublicationCategoryActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_test_series_pan"
             android:theme="@style/AppTheme.FullScreen" />
         <activity
             android:name="com.averda.online.profile.ProfileActivity"
@@ -121,10 +87,6 @@
                 android:value="com.averda.online.home.MainActivity" />
         </activity>
         <activity
-            android:name="com.averda.online.publication.PublicationDetailsActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
             android:name="com.averda.online.classes.ClassPackagePlanActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_class_series_pan"
@@ -138,62 +100,14 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.FullScreen" />
         <activity
-            android:name="com.averda.online.freecourses.FreeClassPackageDetailsActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.freecourses.FreeTestPackageDetailsActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
-
-        <activity
-            android:name="com.averda.online.mypackage.MyPackageActivity"
-            android:label="@string/title_activity_my_package"
-            android:parentActivityName="com.averda.online.home.MainActivity"
-            android:theme="@style/AppTheme.FullScreen">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.averda.online.home.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.averda.online.mypackage.onlineClass.MyPackageClassVideoActivity"
-            android:label="@string/title_activity_my_package"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.payment.CartActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/payment_confirmation"
-            android:theme="@style/AppTheme.FullScreen"
-            android:windowSoftInputMode="adjustResize"/>
-        <activity
-            android:name="com.averda.online.mypackage.onlineClass.ClassVideoListActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
             android:name="com.averda.online.player.PlayerActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.averda.online.mypackage.onlineTestSeries.TestSeriesDetailsActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.mypackage.onlineTestSeries.test.TestResultActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
         <activity
             android:name="com.averda.online.player.WebVideoPlayer"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.averda.online.mypackage.onlineTestSeries.test.TestActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.mypackage.onlineTestSeries.test.TestSolutionActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
         <activity
             android:name="com.averda.online.common.CommonWebViewActivity"
             android:configChanges="orientation|screenSize"
@@ -216,15 +130,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
         <activity
-            android:name="com.averda.online.dailyQuiz.DailyQuizActvity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.mypackage.onlineClass.QueryActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar.Transparent"
-            android:windowSoftInputMode="adjustResize"/>
-        <activity
             android:name="com.averda.online.downloads.MyDownloadActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.FullScreen"
@@ -242,10 +147,6 @@
             android:name="com.averda.online.player.YoutubePlayerActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.averda.online.offers.OfferDialogActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen.Transparent" />
     </application>
 
 </manifest>
