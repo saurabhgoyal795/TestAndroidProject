@@ -40,12 +40,6 @@ import com.averda.online.common.CommonWebViewActivity;
 import com.averda.online.common.ZTAppCompatActivity;
 import com.averda.online.downloads.MyDownloadActivity;
 import com.averda.online.login.LoginActivity;
-import com.averda.online.mypackage.MyPackageActivity;
-import com.averda.online.news.NewsActivity;
-import com.averda.online.notification.NotificationActivity;
-import com.averda.online.offers.OfferActivity;
-import com.averda.online.payment.CartActivity;
-import com.averda.online.payment.PaymentUtils;
 import com.averda.online.preferences.Preferences;
 import com.averda.online.profile.NewProfileActivity;
 import com.averda.online.server.ServerApi;
@@ -156,10 +150,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     }
 
     private void openMyPackages(int screen){
-        Intent intent = new Intent(this, MyPackageActivity.class);
-        intent.putExtra("position", screen);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(intent);
     }
     public void openMyProfile(){
         Intent intent = new Intent(this, NewProfileActivity.class);
@@ -209,11 +199,9 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     }
 
     private void openCart(){
-        startActivity(new Intent(this, CartActivity.class));
     }
 
     private void openNotification() {
-        startActivity(new Intent(this, NotificationActivity.class));
     }
 
     private void openProfile(){
@@ -225,28 +213,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     protected void onStart() {
         super.onStart();
         setProfileImage();
-        if(-1 == Preferences.get(getApplicationContext(), Preferences.KEY_CART_COUNT, -1)){
-            PaymentUtils.getCart(this, new CompleteListener() {
-                @Override
-                public void success(JSONObject response) {
-                    JSONObject data = response.optJSONObject("Body");
-                    JSONArray items = data.optJSONArray("Items");
-                    if(items != null && items.length() > 0) {
-                        Preferences.put(getApplicationContext(), Preferences.KEY_CART_COUNT, items.length());
-                        setCount(MainActivity.this);
-                    }else{
-                        Preferences.put(getApplicationContext(), Preferences.KEY_CART_COUNT, 0);
-                    }
-                }
-
-                @Override
-                public void error(String error) {
-
-                }
-            });
-        }else{
-            setCount(this);
-        }
     }
 
     public void setCount(Context context) {
@@ -338,11 +304,9 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
                         isDrawerClose = true;
                         break;
                     case 6:  //my offer
-                        startActivity(new Intent(MainActivity.this, OfferActivity.class));
                         isDrawerClose = true;
                         break;
                     case 7:  //my offer
-                        startActivity(new Intent(MainActivity.this, NewsActivity.class));
                         isDrawerClose = true;
                         break;
                     case 10:   //share the app

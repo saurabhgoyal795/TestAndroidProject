@@ -21,11 +21,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.averda.online.R;
-import com.averda.online.classes.ClassPackagePlanActivity;
-import com.averda.online.dailyQuiz.DailyQuizActvity;
-import com.averda.online.freecourses.FreeCoursesActivity;
-import com.averda.online.mypackage.MyPackageActivity;
-import com.averda.online.publication.PublicationActivity;
 import com.averda.online.server.ServerApi;
 import com.averda.online.testseries.TestSeriesPlanActivity;
 import com.averda.online.utils.Utils;
@@ -101,17 +96,7 @@ public class HomeFragment extends Fragment {
                         public void onClick(View v) {
                             if("online_series".equalsIgnoreCase(item.optString("type"))){
                                 startActivity(new Intent(getActivity(), TestSeriesPlanActivity.class));
-                            }else if("my_packages".equalsIgnoreCase(item.optString("type"))){
-                                startActivity(new Intent(getActivity(), MyPackageActivity.class));
-                            } else if ("online_class".equalsIgnoreCase(item.optString("type"))){
-                                startActivity(new Intent(getActivity(), ClassPackagePlanActivity.class));
-                            } else if ("publication".equalsIgnoreCase(item.optString("type"))){
-                                startActivity(new Intent(getActivity(), PublicationActivity.class));
-                            }else if ("freecourses".equalsIgnoreCase(item.optString("type"))){
-                                startActivity(new Intent(getActivity(), FreeCoursesActivity.class));
-                            }else if ("daily_quiz".equalsIgnoreCase(item.optString("type"))){
-                                startActivity(new Intent(getActivity(), DailyQuizActvity.class));
-                        }
+                            }
                         }
                     });
                     index++;

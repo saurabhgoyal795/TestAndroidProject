@@ -17,7 +17,6 @@ import android.view.Display;
 import androidx.core.app.TaskStackBuilder;
 
 import com.averda.online.home.MainActivity;
-import com.averda.online.mypackage.MyPackageActivity;
 import com.averda.online.preferences.Preferences;
 import com.averda.online.profile.NewProfileActivity;
 import com.averda.online.server.ServerApi;
@@ -267,28 +266,9 @@ public class Utils {
         activity.finish();
     }
     public static void openMyPackages(Activity activity, int screen){
-        Intent intent = new Intent(activity, MyPackageActivity.class);
-        intent.putExtra("position", screen);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
-        activity.finish();
     }
 
     public static void openMyPackagesNewTask(Activity activity, int screen){
-        Intent intent = new Intent(activity, MyPackageActivity.class);
-        intent.putExtra("position", screen);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity);
-        stackBuilder.addNextIntentWithParentStack(intent);
-
-        Intent[] intents = stackBuilder.getIntents();
-        if(intents.length > 1){
-            intents[0].setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            intents[1].setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        }
-        stackBuilder.startActivities();
-        activity.finish();
     }
     public static void openMyProfile(Activity activity){
         Intent intent = new Intent(activity, NewProfileActivity.class);

@@ -20,7 +20,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.averda.online.R;
 import com.averda.online.common.ZTAppCompatActivity;
-import com.averda.online.payment.CartActivity;
 import com.averda.online.preferences.Preferences;
 import com.averda.online.server.ServerApi;
 import com.averda.online.utils.Utils;
@@ -221,12 +220,6 @@ public class ClassPackageDetailsActivity extends ZTAppCompatActivity implements 
 
     @Override
     public void buy(int subjectId) {
-        Intent intent = new Intent(this, CartActivity.class);
-        intent.putExtra(CartActivity.EXTRA_PACKAGE_ID, itemObj.optInt("OrgPlanID"));
-        intent.putExtra(CartActivity.EXTRA_SUBJECT_ID, subjectId);
-        intent.putExtra(CartActivity.EXTRA_SCREEN_TYPE, "class");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivityForResult(intent, 200);
     }
 
     @Override

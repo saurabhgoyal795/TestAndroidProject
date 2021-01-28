@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.averda.online.R;
 import com.averda.online.server.ServerApi;
-import com.averda.online.utils.PdfOpenActivity;
 import com.averda.online.utils.Utils;
 
 
@@ -51,11 +50,6 @@ public class DownloadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity, PdfOpenActivity.class);
-                intent.putExtra("fileName", viewHolder.item.getName());
-                intent.putExtra("downloadPath", ServerApi.TEST_SOLUTION_PATH);
-                intent.putExtra("basePath", activity.getFilesDir() + "/SubjectPdf/");
-                activity.startActivity(intent);
             }
         });
         viewHolder.delete.setOnClickListener(new View.OnClickListener() {

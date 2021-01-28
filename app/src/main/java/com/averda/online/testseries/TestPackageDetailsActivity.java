@@ -18,14 +18,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.averda.online.R;
 import com.averda.online.common.ZTAppCompatActivity;
-import com.averda.online.mypackage.onlineTestSeries.TestUtils;
-import com.averda.online.mypackage.onlineTestSeries.test.TestActivity;
-import com.averda.online.mypackage.onlineTestSeries.test.TestResultActivity;
-import com.averda.online.payment.CartActivity;
 import com.averda.online.preferences.Preferences;
 import com.averda.online.server.ServerApi;
-import com.averda.online.utils.CompleteListener;
-import com.averda.online.utils.PdfOpenActivity;
 import com.averda.online.utils.Utils;
 import com.averda.online.views.ZTWebView;
 
@@ -196,13 +190,6 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 startDemoTest();
                 break;
             case R.id.schedule:
-                if(Utils.isValidString(pdfPath)){
-                    Intent intent = new Intent(TestPackageDetailsActivity.this, PdfOpenActivity.class);
-                    intent.putExtra("fileName", pdfPath);
-                    intent.putExtra("downloadPath", ServerApi.PDF_BASE_PATH);
-                    intent.putExtra("basePath", getFilesDir() + "/pdf/");
-                    startActivity(intent);
-                }
                 break;
             case R.id.buyButton:
                 startPayment();
@@ -259,12 +246,6 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     }
 
     private void startPayment(){
-        Intent intent = new Intent(this, CartActivity.class);
-        intent.putExtra(CartActivity.EXTRA_PACKAGE_ID, itemObj.optInt("OrgPlanID"));
-        intent.putExtra(CartActivity.EXTRA_SUBJECT_ID, 0);
-        intent.putExtra(CartActivity.EXTRA_SCREEN_TYPE, "test");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivityForResult(intent,  100);
     }
 
     @Override
@@ -276,38 +257,10 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     }
 
     private void fetchDemoTest(){
-        TestUtils.practiceExamByCourse(this, itemObj.optInt("CourseID"), new CompleteListener() {
-            @Override
-            public void success(JSONObject response) {
-                JSONArray array = response.optJSONArray("Body");
-                if(array != null && array.length() > 0){
-                    demoTestItem = array.optJSONObject(0);
-                    if(demoTestItem != null && demoTestItem.length() > 0) {
-                        if(demoTestItem.optInt("ExamStatus") == 3){
-                            ((TextView)findViewById(R.id.freeDemo)).setText("Demo result");
-                        }
-                        findViewById(R.id.freeDemo).setVisibility(View.VISIBLE);
-                    }
-                }
-            }
 
-            @Override
-            public void error(String error) {
-            }
-        });
     }
 
     private void startDemoTest(){
-        if(demoTestItem.optInt("ExamStatus") == 3){
-            Intent intent = new Intent(this, TestResultActivity.class);
-            intent.putExtra("studentExamID", demoTestItem.optInt("StudentExamID"));
-            intent.putExtra("title", demoTestItem.optString("ExamName"));
-            intent.putExtra("examDuration", demoTestItem.optInt("ExamDuration"));
-            startActivity(intent);
-        }else {
-            Intent intent = new Intent(TestPackageDetailsActivity.this, TestActivity.class);
-            intent.putExtra("item", demoTestItem.toString());
-            startActivity(intent);
-        }
+
     }
 }

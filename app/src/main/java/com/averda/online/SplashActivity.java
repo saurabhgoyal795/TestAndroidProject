@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.averda.online.common.ZTAppCompatActivity;
 import com.averda.online.home.MainActivity;
+import com.averda.online.login.LoginActivity;
 import com.averda.online.utils.Utils;
 
 public class SplashActivity extends ZTAppCompatActivity {
@@ -26,7 +27,7 @@ public class SplashActivity extends ZTAppCompatActivity {
     }
 
     private void launchLoginScreen(){
-        Intent intent = new Intent(this, Utils.isLoginCompleted(this) ? MainActivity.class : InitialScreenActivity.class);
+        Intent intent = new Intent(this, Utils.isLoginCompleted(this) ? MainActivity.class : LoginActivity.class);
         startActivity(intent);
         finish();
     }

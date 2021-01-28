@@ -160,10 +160,6 @@
             android:label="@string/title_activity_my_package"
             android:theme="@style/AppTheme.FullScreen" />
         <activity
-            android:name="com.averda.online.utils.PdfOpenActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
             android:name="com.averda.online.payment.CartActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/payment_confirmation"
