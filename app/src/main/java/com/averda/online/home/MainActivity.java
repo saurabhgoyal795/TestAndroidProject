@@ -38,7 +38,6 @@ import com.averda.online.ContactUsActivity;
 import com.averda.online.R;
 import com.averda.online.common.CommonWebViewActivity;
 import com.averda.online.common.ZTAppCompatActivity;
-import com.averda.online.downloads.MyDownloadActivity;
 import com.averda.online.login.LoginActivity;
 import com.averda.online.preferences.Preferences;
 import com.averda.online.profile.NewProfileActivity;
@@ -658,7 +657,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     }
 
     private void openDownloads(){
-        startActivity(new Intent(this, MyDownloadActivity.class));
     }
 
     private void getNotificationCount(){
