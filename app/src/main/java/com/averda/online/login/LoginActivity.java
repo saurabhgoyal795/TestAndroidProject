@@ -270,11 +270,10 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
     private void signIn() {
         JSONObject params = new JSONObject();
         try{
-            params.put("EmailID", email.getText().toString().trim());
-            params.put("Passwords", password.getText().toString().trim());
-            params.put("DeviceType", deviceType);
-            params.put("DeviceInfo", Utils.getPhoneDetail());
-            params.put("BrowserName", "Android App");
+            params.put("email", email.getText().toString().trim());
+            params.put("password", password.getText().toString().trim());
+            params.put("device_id", deviceType);
+            params.put("device_info", Utils.getPhoneDetail());
         }catch (Exception e){
             if(Utils.isDebugModeOn){
                 e.printStackTrace();
@@ -287,9 +286,9 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
                     return;
                 }
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
-                int statusCode = response.optInt("StatusCode");
-                if(200  == statusCode) {
-                    JSONObject data = response.optJSONObject("Body");
+                String statusCode = response.optString("success");
+                if("true"  == statusCode) {
+                    JSONObject data = response.optJSONObject("data");
                     if (data != null) {
                         Utils.setUserProperties(LoginActivity.this, data);
                     }
@@ -298,14 +297,8 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
-                }else if(statusCode == 501){
-                    String message = response.optString("Message");
-                    JSONObject data = response.optJSONObject("Body");
-                    loginStudentId = data.optInt("StudentID");
-                    loginDeviceType = data.optString("DeviceType");
-                    showDialog(message);
                 }else{
-                    String message = response.optString("Message");
+                    String message = response.optString("message");
                     if(Utils.isValidString(message)) {
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                     }

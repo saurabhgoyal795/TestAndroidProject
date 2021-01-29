@@ -675,41 +675,7 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     }
 
     private void checkStudentSession(){
-        JSONObject params = new JSONObject();
-        try{
-            String deviceType = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            if ( Utils.getStudentSessionId(this) == 0) {
-                return;
-            }
-            params.put("StudentSessionID", Utils.getStudentSessionId(this));
-            params.put("DeviceType", deviceType);
-        }catch (Exception e){
-            if(Utils.isDebugModeOn){
-                e.printStackTrace();
-            }
-        }
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "CheckStudentSession", params, new ServerApi.CompleteListener() {
-            @Override
-            public void response(JSONObject response) {
-                Log.i("CheckStudentSession", "response = "+response);
-            }
 
-            @Override
-            public void error(String error) {
-                String deviceType = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-                ServerApi.logoutDevice(MainActivity.this, Utils.getStudentId(getApplicationContext()), deviceType, new ServerApi.CompleteListener() {
-                    @Override
-                    public void response(JSONObject response) {
-                        resetValues();
-                    }
-
-                    @Override
-                    public void error(String error) {
-
-                    }
-                });
-            }
-        });
     }
 
     public void resetValues(){

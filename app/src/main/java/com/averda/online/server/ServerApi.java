@@ -15,15 +15,10 @@ import org.json.JSONObject;
 
 public class ServerApi {
     public static final int MY_SOCKET_TIMEOUT_MS = 60000;
-    public static final String BASE_URL =  "https://onlinezonetech.in/api/app/";
+    public static final String BASE_URL = "https://demo77.mallxs.com/averda/public/api/";
     public static final String WEB_URL = "https://cms.zonetech.in/api/web/";
     public static final String TESTIMONIAL_IMAGE_URL = "https://cms.zonetech.in/upload/AchivementImg/";
     public static final String IMAGE_URL = "https://onlinezonetech.in/Upload/Package/";
-    public static final String SUBJECT_URL = "https://onlinezonetech.in/Upload/Subject/";
-    public static final String PDF_BASE_PATH = "https://onlinezonetech.in/Upload/TimeTable/";
-    public static final String SUBJECT_PDF_PATH = "https://onlinezonetech.in/Upload/SubjectNotes/";
-    public static final String TEST_SOLUTION_PATH = "https://onlinezonetech.in/ExamSolution/";
-    public static final String BOOK_BASE_PATH = "https://cms.zonetech.in/Upload/Books/";
     public static final String PROFILE_BASE_PATH = "https://onlinezonetech.in/Upload/StudentProfile/";
     public static final String TAG = "ServerApi";
     public interface CompleteListener{

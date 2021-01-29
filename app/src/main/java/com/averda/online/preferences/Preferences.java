@@ -22,6 +22,7 @@ public final class Preferences {
 	public static final String KEY_COURSE_ID = "COURSE_ID";
 	public static final String KEY_STUDENT_CODE = "STUDENT_CODE";
 	public static final String KEY_STUDENT_NAME = "STUDENT_NAME";
+	public static final String KEY_STUDENT_LAST_NAME = "STUDENT_LAST_NAME";
 	public static final String KEY_STUDENT_EMAIL = "STUDENT_EMAIL";
 	public static final String KEY_STUDENT_PHONE = "STUDENT_PHONE";
 	public static final String KEY_COURSE_NAME = "COURSE_NAME";
@@ -32,8 +33,10 @@ public final class Preferences {
 	public static final String KEY_CART_COUNT = "CART_COUNT";
 	public static final String KEY_IS_WELCOME_MSG_SHOWN = "IS_WELCOME_MSG_SHOWN";
 	public static final String KEY_IS_NEW_USER = "IS_NEW_USER";
-	public static final String KEY_STUDENT_SESSION_ID = "STUDENT_SESSION_ID";
-	public static final String KEY_IS_TEST_FORM_SUBMITTED = "IS_TEST_FORM_SUBMITTED";
+	public static final String KEY_STUDENT_TYPE = "STUDENT_TYPE";
+	public static final String KEY_COUNTRY = "STUDENT_COUNTRY";
+	public static final String KEY_CITY = "STUDENT_CITY";
+	public static final String KEY_ORGANISATION = "STUDENT_ORGANISATION";
 
 	private static SharedPreferences getPreferences(Context context) {
         if(mPrefs == null) {

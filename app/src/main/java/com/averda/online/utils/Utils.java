@@ -68,18 +68,15 @@ public class Utils {
         return outMetrics;
     }
     public static void setUserProperties(Context context, JSONObject data){
-        Preferences.put(context, Preferences.KEY_STUDENT_ID, data.optInt("StudentID"));
-        Preferences.put(context, Preferences.KEY_COURSE_ID, data.optInt("CourseID"));
-        Preferences.put(context, Preferences.KEY_SPEC_ID, data.optInt("SpecializationID"));
-        Preferences.put(context, Preferences.KEY_STUDENT_CODE, data.optString("StudentCode"));
-        Preferences.put(context, Preferences.KEY_STUDENT_NAME, data.optString("StudentName"));
-        Preferences.put(context, Preferences.KEY_STUDENT_EMAIL, data.optString("EmailID"));
-        Preferences.put(context, Preferences.KEY_STUDENT_PHONE, data.optString("MobileNo"));
-        Preferences.put(context, Preferences.KEY_COURSE_NAME, data.optString("CourseName"));
-        Preferences.put(context, Preferences.KEY_SPEC_NAME, data.optString("SpecName"));
-        Preferences.put(context, Preferences.KEY_STUDENT_ROLLNO, data.optString("RollNo"));
-        Preferences.put(context, Preferences.KEY_STUDENT_PROFILE_PIC, data.optString("ProfilePic"));
-        Preferences.put(context, Preferences.KEY_STUDENT_SESSION_ID, data.optInt("StudentSessionID"));
+        Preferences.put(context, Preferences.KEY_STUDENT_ID, data.optInt("id"));
+        Preferences.put(context, Preferences.KEY_STUDENT_NAME, data.optString("first_name"));
+        Preferences.put(context, Preferences.KEY_STUDENT_LAST_NAME, data.optString("last_name"));
+        Preferences.put(context, Preferences.KEY_STUDENT_EMAIL, data.optString("email"));
+        Preferences.put(context, Preferences.KEY_STUDENT_PHONE, data.optString("phone"));
+        Preferences.put(context, Preferences.KEY_STUDENT_TYPE, data.optInt("is_admin"));
+        Preferences.put(context, Preferences.KEY_CITY, data.optString("city"));
+        Preferences.put(context, Preferences.KEY_COUNTRY, data.optString("StudentCode"));
+        Preferences.put(context, Preferences.KEY_ORGANISATION, data.optString("CourseName"));
     }
 
     public static boolean isValidEmailAddress(String email){
@@ -439,7 +436,4 @@ public class Utils {
         return false;
     }
 
-    public static int getStudentSessionId(Context context){
-        return Preferences.get(context, Preferences.KEY_STUDENT_SESSION_ID,  getStudentId(context));
-    }
 }
