@@ -36,26 +36,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class LoginActivity extends ZTAppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class LoginActivity extends ZTAppCompatActivity implements View.OnClickListener {
     private EditText email;
     private EditText password;
     private EditText name;
+    private EditText lastName;
     private EditText phone;
-    private Spinner courseSpinner;
-    private Spinner specSpinner;
     private EditText otp;
     private boolean isSignUpScreen;
-    private boolean isOtpScreen;
-    private int courseSelectedPosition = 1;
-    private int specializationSelectedPositon;
-    private JSONArray courseList;
-    private JSONArray specList;
-    private CountDownTimer countDownTimer;
     private DisplayMetrics metrics;
     private ImageView passwordVisibleIcon;
     private String deviceType;
     private int loginStudentId;
     private String loginDeviceType;
+    private EditText city;
+    private EditText country;
+    private EditText organization;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,38 +61,19 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         name = findViewById(R.id.name);
+        lastName = findViewById(R.id.lastName);
         phone = findViewById(R.id.phone);
-        courseSpinner = findViewById(R.id.course);
-        specSpinner = findViewById(R.id.spec);
+        city = findViewById(R.id.city);
+        country = findViewById(R.id.country);
+        organization = findViewById(R.id.organization);
         passwordVisibleIcon = findViewById(R.id.passwordVisibleIcon);
         otp = findViewById(R.id.otp);
         findViewById(R.id.newUser).setOnClickListener(this);
-        findViewById(R.id.newUserOTP).setOnClickListener(this);
         findViewById(R.id.loginButton).setOnClickListener(this);
-        findViewById(R.id.forgetPassword).setOnClickListener(this);
         findViewById(R.id.signIn).setOnClickListener(this);
         findViewById(R.id.progressBar).setOnClickListener(this);
-        findViewById(R.id.resendOTP).setOnClickListener(this);
         findViewById(R.id.contentView).setOnClickListener(this);
         passwordVisibleIcon.setOnClickListener(this);
-        courseSpinner.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    hideKeyboard();
-                }
-                return false;
-            }
-        });
-        specSpinner.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    hideKeyboard();
-                }
-                return false;
-            }
-        });
         deviceType = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
@@ -110,21 +87,13 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
             case R.id.contentView:
                 hideKeyboard();
                 break;
-            case R.id.resendOTP:
-                stopTimer();
-                otpGenerateRequest();
-                break;
             case R.id.progressBar:
                 return;
             case R.id.signIn:
                 setLoginLayout();
                 break;
             case R.id.newUser:
-            case R.id.newUserOTP:
                 setNewUserLayout();
-                break;
-            case R.id.forgetPassword:
-                forgetPassword();
                 break;
             case R.id.loginButton:
                 loginButtonClicked();
@@ -134,86 +103,50 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
 
     private void setNewUserLayout() {
         isSignUpScreen = true;
-        isOtpScreen = false;
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)findViewById(R.id.loginView).getLayoutParams();
         params.topMargin = (int)(16 * metrics.density);
         findViewById(R.id.loginView).setLayoutParams(params);
         findViewById(R.id.nameLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.nameLayout2).setVisibility(View.VISIBLE);
         findViewById(R.id.phoneLayout).setVisibility(View.VISIBLE);
-//        findViewById(R.id.courseLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.branchLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.emailLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.passwordLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.otpLayout).setVisibility(View.GONE);
-        findViewById(R.id.forgetPassword).setVisibility(View.GONE);
-        findViewById(R.id.newUserOTP).setVisibility(View.GONE);
+        findViewById(R.id.cityLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.countryLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.orgainizationLayout).setVisibility(View.VISIBLE);
+
         findViewById(R.id.newUser).setVisibility(View.GONE);
         ((TextView) findViewById(R.id.loginButton)).setText(R.string.singup);
         ((TextView) findViewById(R.id.loginMode)).setText(R.string.singup);
         findViewById(R.id.signIn).setVisibility(View.VISIBLE);
-        stopTimer();
-        if(courseList == null || courseList.length() == 0) {
-            getCourseSpec();
-        }
     }
 
     private void setLoginLayout() {
         isSignUpScreen = false;
-        isOtpScreen = false;
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)findViewById(R.id.loginView).getLayoutParams();
         params.topMargin = (int)getResources().getDimension(R.dimen.login_form_top);
         findViewById(R.id.loginView).setLayoutParams(params);
         findViewById(R.id.nameLayout).setVisibility(View.GONE);
+        findViewById(R.id.nameLayout2).setVisibility(View.GONE);
         findViewById(R.id.phoneLayout).setVisibility(View.GONE);
-        findViewById(R.id.courseLayout).setVisibility(View.GONE);
-        findViewById(R.id.branchLayout).setVisibility(View.GONE);
-        findViewById(R.id.otpLayout).setVisibility(View.GONE);
+        findViewById(R.id.cityLayout).setVisibility(View.GONE);
         findViewById(R.id.emailLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.passwordLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.forgetPassword).setVisibility(View.VISIBLE);
-        findViewById(R.id.newUserOTP).setVisibility(View.GONE);
+        findViewById(R.id.countryLayout).setVisibility(View.GONE);
+        findViewById(R.id.orgainizationLayout).setVisibility(View.GONE);
         findViewById(R.id.newUser).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.loginButton)).setText(R.string.singin);
         ((TextView) findViewById(R.id.loginMode)).setText(R.string.singin);
         findViewById(R.id.signIn).setVisibility(View.GONE);
-        stopTimer();
     }
 
-    private void setOtpLayout() {
-        isOtpScreen = true;
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)findViewById(R.id.loginView).getLayoutParams();
-        params.topMargin = (int)getResources().getDimension(R.dimen.login_form_top);
-        findViewById(R.id.loginView).setLayoutParams(params);
-        String msg = String.format(getString(R.string.otp_message), phone.getText().toString().trim());
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-        findViewById(R.id.nameLayout).setVisibility(View.GONE);
-        findViewById(R.id.phoneLayout).setVisibility(View.GONE);
-        findViewById(R.id.courseLayout).setVisibility(View.GONE);
-        findViewById(R.id.branchLayout).setVisibility(View.GONE);
-        findViewById(R.id.forgetPassword).setVisibility(View.GONE);
-        findViewById(R.id.newUserOTP).setVisibility(View.VISIBLE);
-        findViewById(R.id.emailLayout).setVisibility(View.GONE);
-        findViewById(R.id.passwordLayout).setVisibility(View.GONE);
-        findViewById(R.id.otpLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.newUser).setVisibility(View.GONE);
-        ((TextView) findViewById(R.id.loginButton)).setText(R.string.otp_submit);
-        ((TextView) findViewById(R.id.loginMode)).setText(R.string.singup);
-        findViewById(R.id.signIn).setVisibility(View.VISIBLE);
-        startTimer();
-    }
+
 
     private void loginButtonClicked() {
         if (checkValidity()) {
             findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-            if(isOtpScreen){
-                if(Utils.isValidString(otp.getText().toString().trim())) {
-                    otpValidateRequest(otp.getText().toString().trim());
-                }else{
-                    Toast.makeText(getApplicationContext(), "Enter the one time password that you have received in the SMS.", Toast.LENGTH_SHORT).show();
-                    findViewById(R.id.progressBar).setVisibility(View.GONE);
-                }
-            }else if (isSignUpScreen) {
-                checkEmailMobileRegistration();
+             if (isSignUpScreen) {
+                signUp();
             } else {
                 signIn();
             }
@@ -223,36 +156,36 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
     private void signUp() {
         JSONObject params = new JSONObject();
         try{
+            params.put("first_name", name.getText().toString().trim());
+            params.put("last_name", lastName.getText().toString().trim());
+            params.put("phone", phone.getText().toString().trim());
+            params.put("email", email.getText().toString().trim());
             params.put("EmailID", email.getText().toString().trim());
-            params.put("Passwords", password.getText().toString().trim());
-            try {
-                params.put("CourseID", courseList.optJSONObject(courseSelectedPosition).optString("CourseID"));
-            } catch (Exception e){
-                params.put("CourseID", "");
-            }
-            params.put("SpecializationID", specList.optJSONObject(specializationSelectedPositon).optString("SpecializationID"));
-            params.put("MobileNo", phone.getText().toString().trim());
-            params.put("StudentName", name.getText().toString().trim());
-            params.put("DeviceInfo", Utils.getPhoneDetail());
-            params.put("DeviceType", deviceType);
+            params.put("password", password.getText().toString().trim());
+            params.put("city", city.getText().toString().trim());
+            params.put("country", country.getText().toString().trim());
+            params.put("organization", organization.getText().toString().trim());
+            params.put("device_info", Utils.getPhoneDetail());
+            params.put("device_id", deviceType);
         }catch (Exception e){
             if(Utils.isDebugModeOn){
                 e.printStackTrace();
             }
         }
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "register", params, new ServerApi.CompleteListener() {
+        ServerApi.callServerApi(this, ServerApi.BASE_URL, "createuser", params, new ServerApi.CompleteListener() {
             @Override
             public void response(JSONObject response) {
                 if(Utils.isActivityDestroyed(LoginActivity.this)){
                     return;
                 }
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
-                int statusCode = response.optInt("StatusCode");
-                if(200 == statusCode) {
+                String statusCode = response.optString("success");
+                boolean status = response.optBoolean("success");
+                if("true"  == statusCode || status) {
                     Preferences.put(getApplicationContext(), Preferences.KEY_IS_NEW_USER, true);
                     setLoginLayout();
                 }
-                String message = response.optString("Message");
+                String message = response.optString("message");
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
             }
 
@@ -345,19 +278,32 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
                 errorMsg.append("Invalid name");
                 isAllValid = false;
             }
-            courseSelectedPosition = 1;
-            if (courseSelectedPosition == 0) {
+            if (!Utils.isValidString(lastName.getText().toString())) {
                 if (Utils.isValidString(errorMsg.toString())) {
                     errorMsg.append("\n");
                 }
-                errorMsg.append("Invalid course");
+                errorMsg.append("Invalid name");
                 isAllValid = false;
             }
-            if (specializationSelectedPositon == 0) {
+            if (!Utils.isValidString(city.getText().toString())) {
                 if (Utils.isValidString(errorMsg.toString())) {
                     errorMsg.append("\n");
                 }
-                errorMsg.append("Invalid branch");
+                errorMsg.append("Invalid city");
+                isAllValid = false;
+            }
+            if (!Utils.isValidString(country.getText().toString())) {
+                if (Utils.isValidString(errorMsg.toString())) {
+                    errorMsg.append("\n");
+                }
+                errorMsg.append("Invalid country");
+                isAllValid = false;
+            }
+            if (!Utils.isValidString(organization.getText().toString())) {
+                if (Utils.isValidString(errorMsg.toString())) {
+                    errorMsg.append("\n");
+                }
+                errorMsg.append("Invalid organization");
                 isAllValid = false;
             }
         }
@@ -365,91 +311,6 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
             Toast.makeText(getApplicationContext(), errorMsg.toString(), Toast.LENGTH_SHORT).show();
         }
         return isAllValid;
-    }
-
-    private void getCourseSpec() {
-        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "GetCourseSpec", null, new ServerApi.CompleteListener() {
-            @Override
-            public void response(JSONObject response) {
-                if(Utils.isActivityDestroyed(LoginActivity.this)){
-                    return;
-                }
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-                JSONObject data = response.optJSONObject("Body");
-                JSONArray courseData = data.optJSONArray("Course");
-                JSONArray specData = data.optJSONArray("Specialization");
-                setCourseData(courseData);
-                setSpecializationData(specData);
-            }
-
-            @Override
-            public void error(String error) {
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void setCourseData(JSONArray courseData) {
-        ArrayList<String> items = new ArrayList<>();
-        try {
-            JSONObject object = new JSONObject();
-            object.put("CourseName", "Select Course");
-            items.add("Select Course");
-            courseList = new JSONArray();
-            courseList.put(object);
-            for (int i = 0 ; i < courseData.length() ; i++){
-                courseList.put(courseData.optJSONObject(i));
-                items.add(courseData.optJSONObject(i).optString("CourseName"));
-            }
-        }catch (Exception e){
-            if(Utils.isDebugModeOn){
-                e.printStackTrace();
-            }
-        }
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, items);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        courseSpinner.setAdapter(dataAdapter);
-        courseSpinner.setOnItemSelectedListener(this);
-    }
-
-    private void setSpecializationData(JSONArray specializationData) {
-        ArrayList<String> items = new ArrayList<>();
-        try {
-            JSONObject object = new JSONObject();
-            object.put("SpecName", "Select Branch");
-            items.add("Select Branch");
-            specList = new JSONArray();
-            specList.put(object);
-            for (int i = 0 ; i < specializationData.length() ; i++){
-                specList.put(specializationData.optJSONObject(i));
-                items.add(specializationData.optJSONObject(i).optString("SpecName"));
-            }
-        }catch (Exception e){
-            if(Utils.isDebugModeOn){
-                e.printStackTrace();
-            }
-        }
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, items);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        specSpinner.setAdapter(dataAdapter);
-        specSpinner.setOnItemSelectedListener(this);
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if(parent == specSpinner){
-            specializationSelectedPositon = position;
-        }else{
-           // courseSelectedPosition = position;
-        }
-        hideKeyboard();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     private void hideKeyboard() {
@@ -460,101 +321,8 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
         } catch(Throwable e) {}
     }
 
-    private void forgetPassword(){
-        if(!Utils.isValidEmailAddress(email.getText().toString())){
-            Toast.makeText(getApplicationContext(), "Enter valid email id", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        JSONObject params = new JSONObject();
-        try{
-            params.put("EmailID", email.getText().toString());
-        }catch (Exception e){
-            if(Utils.isDebugModeOn){
-                e.printStackTrace();
-            }
-        }
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "forgetpassword", params, new ServerApi.CompleteListener() {
-            @Override
-            public void response(JSONObject response) {
-                if(Utils.isActivityDestroyed(LoginActivity.this)){
-                    return;
-                }
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-                String message = response.optString("Message");
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-            }
 
-            @Override
-            public void error(String error) {
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
-    private void otpGenerateRequest(){
-        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.loginButton)).setText(R.string.otp_send);
-        JSONObject params = new JSONObject();
-        try{
-            params.put("MobileNo", phone.getText().toString().trim());
-            params.put("OtpType", 0);
-        }catch (Exception e){
-            if(Utils.isDebugModeOn){
-                e.printStackTrace();
-            }
-        }
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "GenerateOtp", params, new ServerApi.CompleteListener() {
-            @Override
-            public void response(JSONObject response) {
-                if(response.optInt("StatusCode") == 200){
-                    setOtpLayout();
-                }else{
-                    Toast.makeText(getApplicationContext(), response.optString("ErrMsg"), Toast.LENGTH_SHORT).show();
-                    ((TextView) findViewById(R.id.loginButton)).setText(R.string.singup);
-                }
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-            }
-
-            @Override
-            public void error(String error) {
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-                ((TextView) findViewById(R.id.loginButton)).setText(R.string.singup);
-            }
-        });
-    }
-    private void otpValidateRequest(String otp){
-        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        JSONObject params = new JSONObject();
-        try{
-            params.put("MobileNo", phone.getText().toString().trim());
-            params.put("OtpType", 0);
-            params.put("OTP", otp);
-        }catch (Exception e){
-            if(Utils.isDebugModeOn){
-                e.printStackTrace();
-            }
-        }
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "ValidateOtp", params, new ServerApi.CompleteListener() {
-            @Override
-            public void response(JSONObject response) {
-                if(response.optInt("StatusCode") == 200){
-                    signUp();
-                }else{
-                    findViewById(R.id.progressBar).setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), response.optString("ErrMsg"), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void error(String error) {
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     @Override
     public void onBackPressed() {
@@ -566,35 +334,10 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void startTimer(){
-        stopTimer();
-        countDownTimer = new CountDownTimer(60 * 1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                ((TextView)findViewById(R.id.timer)).setText(Utils.getTime(millisUntilFinished));
-            }
-
-            @Override
-            public void onFinish() {
-                findViewById(R.id.timer).setVisibility(View.GONE);
-                findViewById(R.id.resendOTP).setVisibility(View.VISIBLE);
-            }
-        };
-        findViewById(R.id.timer).setVisibility(View.VISIBLE);
-        countDownTimer.start();
-    }
-
-    private void stopTimer(){
-        findViewById(R.id.resendOTP).setVisibility(View.GONE);
-        if(countDownTimer != null){
-            countDownTimer.cancel();
-        }
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopTimer();
     }
 
     private void togglePasswordVisiblity(){
@@ -606,72 +349,5 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
             passwordVisibleIcon.setImageResource(R.drawable.baseline_visibility_black_18);
             password.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
-    }
-
-    AlertDialog dialog;
-    private void showDialog(String msg) {
-        try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            LayoutInflater li = LayoutInflater.from(this);
-            View promptsView = li.inflate(R.layout.alert_dialog, null);
-            TextView message = promptsView.findViewById(R.id.message);
-            message.setText(msg);
-            TextView logout = promptsView.findViewById(R.id.ok);
-            logout.setText("Logout");
-            logout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-                    ServerApi.logoutDevice(getApplicationContext(), loginStudentId, loginDeviceType, new ServerApi.CompleteListener() {
-                        @Override
-                        public void response(JSONObject response) {
-                            Toast.makeText(getApplicationContext(), "Successfully logout from other device", Toast.LENGTH_SHORT).show();
-                            findViewById(R.id.progressBar).setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void error(String error) {
-                            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-                            findViewById(R.id.progressBar).setVisibility(View.GONE);
-                        }
-                    });
-                }
-            });
-            builder.setView(promptsView);
-            dialog = builder.create();
-            dialog.setCanceledOnTouchOutside(true);
-            if (!Utils.isActivityDestroyed(this))
-                dialog.show();
-        } catch (Exception e) {
-            if (Utils.isDebugModeOn)
-                e.printStackTrace();
-        }
-    }
-
-    private void checkEmailMobileRegistration(){
-        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        JSONObject params = new JSONObject();
-        try{
-            params.put("EmailID", email.getText().toString());
-            params.put("MobileNo", phone.getText().toString());
-        }catch (Exception e){
-            if(Utils.isDebugModeOn){
-                e.printStackTrace();
-            }
-        }
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "checkEmailMobileRegistration", params, new ServerApi.CompleteListener() {
-            @Override
-            public void response(JSONObject response) {
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-                otpGenerateRequest();
-            }
-
-            @Override
-            public void error(String error) {
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

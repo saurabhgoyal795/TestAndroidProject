@@ -36,24 +36,15 @@ public class ServerApi {
             public void onResponse(JSONObject response) {
                 if(response != null){
                     Log.i(TAG, "response = "+response);
-                    int statusCode = response.optInt("StatusCode");
-                    if(200 == statusCode) {
+                    String statusCode = response.optString("success");
+                    boolean status = response.optBoolean("success");
+                    if("true" == statusCode || status) {
                         if (completeListener != null) {
                             completeListener.response(response);
                         }
                     }else {
-                        if("login".equalsIgnoreCase(actionName) || "register".equalsIgnoreCase(actionName)){
-                            if (completeListener != null) {
-                                completeListener.response(response);
-                            }
-                        }else {
-                            if (completeListener != null) {
-                                if(response.has("Message") && Utils.isValidString(response.optString("Message"))){
-                                    completeListener.error(response.optString("Message"));
-                                }else {
-                                    completeListener.error(response.toString());
-                                }
-                            }
+                        if (completeListener != null) {
+                            completeListener.response(response);
                         }
                     }
                 }else{
