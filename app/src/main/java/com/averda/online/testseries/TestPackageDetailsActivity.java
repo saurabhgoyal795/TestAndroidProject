@@ -97,10 +97,12 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             }
             setImageViewSize();
             setBannerImage();
+            findViewById(R.id.submitButton).setVisibility(View.GONE);
         } else {
             setImageViewSize();
             setCameraImage();
             setDataArray();
+            findViewById(R.id.submitButton).setVisibility(View.VISIBLE);
         }
         findViewById(R.id.progressBar).setVisibility(View.GONE);
         BottomNavigationView navView = findViewById(R.id.navigation);
@@ -131,6 +133,24 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         mLayoutManager = new GridLayoutManager(getApplicationContext(),1);
         mRecyclerView.setLayoutManager(mLayoutManager);
         setList(dataArray);
+        findViewById(R.id.submitButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (imagePath.trim().equalsIgnoreCase("")) {
+                   Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                uploadProfileImage(imagePath);
+                            } catch (Exception e) {
+                            }
+                        }
+                    }).start();
+                }
+            }
+        });
     }
 
     private void setDataArray() {
@@ -380,11 +400,16 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             String mime = getMimeType(filePath);
 
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .addFormDataPart("StudentID", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
-                    .addFormDataPart("file", new File(filePath).getName(), RequestBody.create(MediaType.parse(mime), new File(filePath)))
+//                    .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
+                    .addFormDataPart("user_id", 3+"")
+                    .addFormDataPart("comment", "")
+                    .addFormDataPart("latitude", "123456")
+                    .addFormDataPart("longitude", "1234568")
+                    .addFormDataPart("questions", "1,2,6")
+                    .addFormDataPart("image", new File(filePath).getName(), RequestBody.create(MediaType.parse(mime), new File(filePath)))
                     .build();
             okhttp3.Request request = new okhttp3.Request.Builder()
-                    .url(ServerApi.BASE_URL+"UpdateProfilePic")
+                    .url(ServerApi.BASE_URL+"submitrequest")
                     .method("POST", body)
                     .header("accept", "application/json")
                     .build();
@@ -396,14 +421,11 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                         if (response.isSuccessful()) {
                             String res = response.body().string();
                             JSONObject object = new JSONObject(res);
-                            if(object.optInt("StatusCode") == 200){
-                                object = object.optJSONObject("Body");
-                                String profilePic = object.optString("ProfilePic");
-                                Preferences.put(getApplicationContext(), Preferences.KEY_STUDENT_PROFILE_PIC, profilePic);
-                                Toast.makeText(getApplicationContext(), "Profile image updated", Toast.LENGTH_SHORT).show();
-                                setProfileImage();
-                            }else{
-                                Toast.makeText(getApplicationContext(), "Profile image not updated, try again", Toast.LENGTH_SHORT).show();
+                            String statusCode = object.optString("success");
+                            boolean status = object.optBoolean("success");
+                            if("true"  == statusCode || status) {
+                                Toast.makeText(getApplicationContext(), "Form request submitted successfully", Toast.LENGTH_SHORT).show();
+                                Preferences.put(getApplicationContext(), Preferences.KEY_STUDENT_PROFILE_PIC, imagePath);
                             }
                         }
                     }catch (Exception e){
@@ -422,7 +444,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(), "Profile image not updated, try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Form request not updated, try again", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -456,10 +478,6 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private void setBannerImage(){
         String imagePath = itemObj.optString("image");
         if(Utils.isValidString(imagePath)) {
-            imagePath = ServerApi.IMAGE_URL + imagePath;
-            if(Utils.isActivityDestroyed(this)){
-                return;
-            }
             Glide.with(this)
                     .load(imagePath)
                     .override(imageWidth, imageHeigth)
