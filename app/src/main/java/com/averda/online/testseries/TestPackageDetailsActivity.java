@@ -91,15 +91,11 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                     e.printStackTrace();
                 }
             }
-            if(Utils.isLollipop()) {
-                int position = bundle.getInt("position");
-                bannerImage.setTransitionName("test_"+position);
-            }
-            setImageViewSize();
+//            setImageViewSize();
             setBannerImage();
             findViewById(R.id.submitButton).setVisibility(View.GONE);
         } else {
-            setImageViewSize();
+//            setImageViewSize();
             setCameraImage();
             setDataArray();
             findViewById(R.id.submitButton).setVisibility(View.VISIBLE);
