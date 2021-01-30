@@ -67,9 +67,9 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
             }
             Glide.with(context)
                     .load(imagePath)
-                    .override(imageWidth, (int)(150*metrics.density))
+                    .override(imageWidth, (int)(80*metrics.density))
                     .error(R.drawable.waste_material)
-                    .placeholder(R.drawable.samplepackage)
+                    .placeholder(R.drawable.waste_material)
                     .into(holder.planImage);
         }else{
             if(Utils.isActivityDestroyed(context)){
