@@ -9,11 +9,13 @@
     <item
         android:id="@+id/navigation_classes"
         android:icon="@drawable/onlineclass"
+        android:visible="false"
         android:title="My Classes" />
 
     <item
         android:id="@+id/navigation_test"
         android:icon="@drawable/testseries"
+        android:visible="false"
         android:title="My OTS" />
     <item
         android:id="@+id/navigation_profile"
