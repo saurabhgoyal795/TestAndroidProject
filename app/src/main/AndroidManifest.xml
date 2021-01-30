@@ -52,11 +52,6 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.FullScreen" />
         <activity
-            android:name="com.averda.online.classes.SubjectsActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="Latest News"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
             android:name="com.averda.online.profile.TransactionActivity"
             android:configChanges="orientation|screenSize"
             android:label="My Transactions"
@@ -82,27 +77,9 @@
                 android:value="com.averda.online.home.MainActivity" />
         </activity>
         <activity
-            android:name="com.averda.online.classes.ClassPackagePlanActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_class_series_pan"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
             android:name="com.averda.online.testseries.TestPackageDetailsActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.classes.ClassPackageDetailsActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
-            android:name="com.averda.online.player.PlayerActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.averda.online.player.WebVideoPlayer"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
         <activity
             android:name="com.averda.online.common.CommonWebViewActivity"
             android:configChanges="orientation|screenSize"
@@ -124,11 +101,6 @@
             android:name="com.averda.online.cropper.CropImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.averda.online.downloads.MyDownloadActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.FullScreen"
-            android:label="My Downloads"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.averda.online"
@@ -138,10 +110,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
-        <activity
-            android:name="com.averda.online.player.YoutubePlayerActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
     </application>
 
 </manifest>
