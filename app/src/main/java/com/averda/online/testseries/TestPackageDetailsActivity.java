@@ -401,7 +401,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                     .addFormDataPart("comment", "")
                     .addFormDataPart("latitude", "123456")
                     .addFormDataPart("longitude", "1234568")
-                    .addFormDataPart("questions", "1,2,6")
+                    .addFormDataPart("questions", adapter.getItemCheckedList())
                     .addFormDataPart("image", new File(filePath).getName(), RequestBody.create(MediaType.parse(mime), new File(filePath)))
                     .build();
             okhttp3.Request request = new okhttp3.Request.Builder()

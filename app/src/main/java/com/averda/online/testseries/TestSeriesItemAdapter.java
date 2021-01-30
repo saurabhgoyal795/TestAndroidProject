@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.averda.online.utils.Utils;
 import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAdapter.TestPlanViewHolder> {
@@ -71,6 +73,29 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
         } else {
             holder.checkBox.setChecked(false);
         }
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                JSONObject itemObj = planItem.optJSONObject(position);
+                if (isChecked ) {
+                    try {
+                        itemObj.put("is_checked", 1);
+                        planItem.put(position, itemObj);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        itemObj.put("is_checked", 0);
+                        planItem.put(position, itemObj);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }
+        );
     }
 
     @Override
@@ -80,5 +105,16 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
     public void refreshAdapter(JSONArray items) {
         planItem = items;
         notifyDataSetChanged();
+    }
+
+    public String getItemCheckedList() {
+        String questionText = "";
+        for (int p = 0 ; p<planItem.length(); p++) {
+            JSONObject itemObj = planItem.optJSONObject(p);
+            if (itemObj.optInt("is_checked") == 1) {
+                questionText = questionText + itemObj.optInt("id")+",";
+            }
+        }
+        return  questionText;
     }
 }
