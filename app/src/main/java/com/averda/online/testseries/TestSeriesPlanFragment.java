@@ -77,31 +77,12 @@ public class TestSeriesPlanFragment extends Fragment {
 
     private void setList(JSONArray data){
         if (data != null) {
-            listData.clear();
-            for (int i = 0 ; i < data.length() ; i++){
-                JSONObject object = data.optJSONObject(i);
-                int courseId = object.optInt("CourseID");
-                JSONArray array = listData.get(courseId);
-                if(array == null){
-                    array = new JSONArray();
-                }
-                array.put(object);
-                listData.put(courseId, array);
-                JSONArray all = listData.get(-1);
-                if(all == null){
-                    all = new JSONArray();
-                }
-                all.put(object);
-                listData.put(-1, all);
-                if(!courseIds.contains(courseId)){
-                    courseIds.add(courseId);
-                }
-            }
+
             if(adapter == null) {
                 if(!isAdded()){
                     return;
                 }
-                adapter = new TestSeriesAdapter(listData.get(-1),R.layout.test_plan_item,getActivity());
+                adapter = new TestSeriesAdapter(data,R.layout.test_plan_item,getActivity());
                 mRecyclerView.setAdapter(adapter);
             }else{
                 adapter.refreshAdapter(data);
@@ -109,7 +90,6 @@ public class TestSeriesPlanFragment extends Fragment {
             if(!isAdded()){
                 return;
             }
-            ((TestSeriesPlanActivity)getActivity()).setFilterOptions();
         }
     }
     private void checkCacheValues(){

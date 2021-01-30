@@ -52,11 +52,6 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.FullScreen" />
         <activity
-            android:name="com.averda.online.testseries.TestSeriesPlanActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_test_series_pan"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
             android:name="com.averda.online.classes.SubjectsActivity"
             android:configChanges="orientation|screenSize"
             android:label="Latest News"

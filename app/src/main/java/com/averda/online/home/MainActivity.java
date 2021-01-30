@@ -15,9 +15,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -97,7 +95,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
         HomeFragment homeFragment = new HomeFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commitAllowingStateLoss();
         ((TextView)findViewById(R.id.userName)).setText(Utils.getName(this));
-        ((TextView)findViewById(R.id.userBranch)).setText(Utils.getStudentSpec(this));
         findViewById(R.id.userImage).setOnClickListener(this);
         navView.getMenu().getItem(0).setChecked(true);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -119,20 +116,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
                 return false;
             }
         });
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showWelcomeDialog();
-            }
-        }, 2000);
-        Utils.getCourseSpec(this, null);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                checkStudentSession();
-            }
-        }, 3000);
 
     }
 
@@ -233,7 +216,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
             icon.mutate();
             icon.setDrawableByLayerId(R.id.cartCount, badge);
         }
-        getNotificationCount();
     }
 
     public void setNotificationCount(Context context, int count) {
@@ -657,21 +639,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     }
 
     private void openDownloads(){
-    }
-
-    private void getNotificationCount(){
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "StudentNotificationCount/"+Utils.getStudentId(this), null, new ServerApi.CompleteListener() {
-            @Override
-            public void response(JSONObject response) {
-                int count = response.optInt("RecordCount");
-                setNotificationCount(getApplicationContext(), count);
-            }
-
-            @Override
-            public void error(String error) {
-
-            }
-        });
     }
 
     private void checkStudentSession(){

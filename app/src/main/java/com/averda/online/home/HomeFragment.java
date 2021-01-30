@@ -1,214 +1,122 @@
 package com.averda.online.home;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.averda.online.testseries.TestSeriesAdapter;
 import com.averda.online.R;
 import com.averda.online.server.ServerApi;
-import com.averda.online.testseries.TestSeriesPlanActivity;
 import com.averda.online.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import static android.os.Looper.getMainLooper;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HomeFragment extends Fragment {
-
-    private String homeItemsArray = "[{\"title\":\"Online Classes\",\"icon\":\"home_onlineclass\",\"type\":\"online_class\"},{\"title\":\"Test Series\",\"icon\":\"home_testseries\",\"type\":\"online_series\"},{\"title\":\"Publications\",\"icon\":\"publication\",\"type\":\"publication\"},{\"title\":\"My Packages\",\"icon\":\"mycourses\",\"type\":\"my_packages\"},{\"title\":\"Free Courses\",\"icon\":\"elearning\",\"type\":\"freecourses\"},{\"title\":\"Daily Quiz\",\"icon\":\"quiz\",\"type\":\"daily_quiz\"}]";
-    private LinearLayout mainLayout;
-    private RecyclerView testimonialList;
-    TestimonialAdapter testimonialAdapter;
-    private int liveClassVisibleItem;
-    private Handler flipHandler;
-    DisplayMetrics metrics;
-    private Runnable flipRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (flipHandler == null) {
-                return;
-            }
-            showNextItem();
-            if(flipHandler != null){
-                flipHandler.postDelayed(flipRunnable, 4000);
-            }
-        }
-    };
-
+    RecyclerView mRecyclerView;
+    private GridLayoutManager mLayoutManager;
+    private TestSeriesAdapter adapter = null;
+    private HashMap<Integer, JSONArray> listData = new HashMap<>();
+    public ArrayList<Integer> courseIds = new ArrayList<>();
     public HomeFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        mainLayout = rootView.findViewById(R.id.mainLayout);
-        testimonialList = rootView.findViewById(R.id.testimonialList);
-        metrics = Utils.getMetrics(getActivity());
-        setHomeList();
-        getTopRanker();
-        return rootView;
-    }
-
-    private void setHomeList() {
-        int width = (metrics.widthPixels - (int)(128 * metrics.density))/2;
-        int height = (metrics.heightPixels - (int)(350 * metrics.density))/3;
-        int minHeight = (int)(120 * metrics.density);
-        width = Math.max(width, minHeight);
-        height = Math.max(height, minHeight);
-        try {
-            JSONArray array = new JSONArray(homeItemsArray);
-            int index = 0;
-            for (int i = 0 ; i < mainLayout.getChildCount() ; i++){
-                LinearLayout child = (LinearLayout) mainLayout.getChildAt(i);
-                for (int j = 0 ; j < child.getChildCount() ; j++){
-                    CardView innerChild = (CardView)child.getChildAt(j);
-                    innerChild.getLayoutParams().height = (width > height) ? height : width;
-                    JSONObject item = array.optJSONObject(index);
-                    ((TextView)innerChild.findViewById(R.id.title)).setText(item.optString("title"));
-                    ImageView icon = innerChild.findViewById(R.id.icon);
-                    int imageId = getResources().getIdentifier(item.optString("icon"), "drawable", getActivity().getPackageName());
-                    if(Utils.isActivityDestroyed(getActivity())){
-                        return;
-                    }
-                    Glide.with(HomeFragment.this)
-                            .load(imageId)
-                            .into(icon);
-                    innerChild.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if("online_series".equalsIgnoreCase(item.optString("type"))){
-                                startActivity(new Intent(getActivity(), TestSeriesPlanActivity.class));
-                            }
-                        }
-                    });
-                    index++;
-                }
-            }
-            mainLayout.setVisibility(View.VISIBLE);
-        } catch (Exception e) {
-            if (Utils.isDebugModeOn) {
-                e.printStackTrace();
-            }
+        final View rootView =  inflater.inflate(R.layout.fragment_test_series_plan, container, false);
+        mRecyclerView = rootView.findViewById(R.id.recylerView);
+        if (mRecyclerView != null) {
+            mRecyclerView.setHasFixedSize(true);
         }
-    }
-
-    private void startAutoFlip() {
-        if (flipHandler == null) {
-            flipHandler = new Handler(getMainLooper());
+        if(!isAdded()){
+            return rootView;
         }
-        flipHandler.postDelayed(flipRunnable, 4000);
-    }
-
-    private void stopAutoFlip() {
-        if (flipHandler != null) {
-            flipHandler.removeCallbacks(flipRunnable);
-            flipHandler = null;
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        startAutoFlip();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        stopAutoFlip();
-    }
-
-
-    private void showNextItem() {
-        try {
-            int finalIndex = liveClassVisibleItem + 1;
-            int totalCount = testimonialAdapter.getItemCount();
-            if (finalIndex < totalCount) {
-                testimonialList.smoothScrollToPosition(finalIndex);
-            } else {
-                finalIndex = 0;
-                testimonialList.scrollToPosition(finalIndex);
-            }
-        } catch (Exception e) {
-            if (Utils.isDebugModeOn) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void getTopRanker() {
+        mLayoutManager = new GridLayoutManager(getActivity(),1);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         checkCacheValues();
-        ServerApi.callServerApiJsonArray(getActivity(), ServerApi.WEB_URL, "homeAchivements", new ServerApi.CompleteListenerArray() {
+        if(!isAdded()){
+            return rootView;
+        }
+        JSONObject params = new JSONObject();
+        Log.d("HomeFragment", "id: "+ Utils.getStudentId(getActivity()));
+        try{
+            params.put("user_id",  3);
+        }catch (Exception e){
+            if(Utils.isDebugModeOn){
+                e.printStackTrace();
+            }
+        }
+        ServerApi.callServerApi(getActivity(), ServerApi.BASE_URL, "getuserallrequest", params, new ServerApi.CompleteListener() {
             @Override
-            public void response(JSONArray response) {
+            public void response(JSONObject response) {
                 if(Utils.isActivityDestroyed(getActivity())){
                     return;
                 }
-                Utils.saveObject(getActivity(), response.toString(), "homeAchivements");
-                setTestimonialList(response);
+                rootView.findViewById(R.id.progressBar).setVisibility(View.GONE);
+                String statusCode = response.optString("success");
+                boolean status = response.optBoolean("success");
+                if("true"  == statusCode || status) {
+                    JSONArray data = response.optJSONArray("data");
+                    if(!isAdded()){
+                        return;
+                    }
+                    Utils.saveObject(getActivity(), data.toString(), "getuserallrequest");
+                    setList(data);
+                }
             }
 
             @Override
             public void error(String error) {
-
+                if(Utils.isActivityDestroyed(getActivity())){
+                    return;
+                }
+                rootView.findViewById(R.id.progressBar).setVisibility(View.GONE);
+                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
             }
         });
+        return rootView;
     }
 
-    private void setTestimonialList(JSONArray response){
-        if(testimonialAdapter == null) {
-            new PagerSnapHelper().attachToRecyclerView(testimonialList);
-            final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false);
-            testimonialList.setNestedScrollingEnabled(false);
-            testimonialList.setHasFixedSize(false);
-            testimonialList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    final int position = mLayoutManager.findLastCompletelyVisibleItemPosition();
-                    if (position >= 0) {
-                        liveClassVisibleItem = position;
-                    }
+    private void setList(JSONArray data){
+        if (data != null) {
+            if(adapter == null) {
+                if(!isAdded()){
+                    return;
                 }
-            });
-            testimonialAdapter = new TestimonialAdapter(getActivity(), response);
-            testimonialList.setLayoutManager(mLayoutManager);
-            testimonialList.setAdapter(testimonialAdapter);
-        }else{
-            testimonialAdapter.refreshValues(response);
+                adapter = new TestSeriesAdapter(data,R.layout.test_plan_item,getActivity());
+                mRecyclerView.setAdapter(adapter);
+            }else{
+                adapter.refreshAdapter(data);
+            }
         }
     }
-
     private void checkCacheValues(){
         String value = null;
         try{
-            value = (String)Utils.getObject(getActivity(), "homeAchivements");
+            value = (String)Utils.getObject(getActivity(), "getuserallrequest");
             if(Utils.isValidString(value)){
                 JSONArray response = new JSONArray(value);
-                setTestimonialList(response);
+                setList(response);
             }
         }catch (Exception e){
             if(Utils.isDebugModeOn){
                 e.printStackTrace();
             }
         }
+    }
+    public void setFliter(int courseId){
+        adapter.refreshAdapter(listData.get(courseId));
     }
 }

@@ -29,12 +29,16 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
     protected class TestPlanViewHolder extends RecyclerView.ViewHolder {
         private ImageView planImage;
         private TextView planText;
-        private TextView totalExams;
+        private TextView dateText;
+        private TextView locationText;
+        private TextView status;
         public TestPlanViewHolder(View v) {
             super(v);
             planImage = v.findViewById(R.id.planImage);
             planText = v.findViewById(R.id.planText);
-            totalExams = v.findViewById(R.id.extraDetails);
+            dateText = v.findViewById(R.id.dateText);
+            locationText = v.findViewById(R.id.locationText);
+            status = v.findViewById(R.id.status);
         }
     }
 
@@ -56,16 +60,15 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
     @Override
     public void onBindViewHolder(final TestSeriesAdapter.TestPlanViewHolder holder, final int position) {
         final JSONObject item = planItem.optJSONObject(holder.getAdapterPosition());
-        String imagePath = item.optString("ImageURL");
+        String imagePath = item.optString("image");
         if(Utils.isValidString(imagePath)) {
-            imagePath = "https://onlinezonetech.in/Upload/Package/"+imagePath;
             if(Utils.isActivityDestroyed(context)){
                 return;
             }
             Glide.with(context)
                     .load(imagePath)
                     .override(imageWidth, (int)(150*metrics.density))
-                    .error(R.drawable.samplepackage)
+                    .error(R.drawable.waste_material)
                     .placeholder(R.drawable.samplepackage)
                     .into(holder.planImage);
         }else{
@@ -75,13 +78,26 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
             Glide.with(context)
                     .clear(holder.planImage);
         }
-        holder.planText.setText(planItem.optJSONObject(position).optString("OrgPlanName"));
+        int id= planItem.optJSONObject(position).optInt("id");
+        String idVal = ""+id;
+        if (id < 10) {
+            idVal = "00"+id;
+        } else if (id < 100) {
+            idVal = "0"+id;
+        }
+        holder.planText.setText("ID :"+ idVal);
+        if (planItem.optJSONObject(position).has("location")) {
+            holder.locationText.setText(planItem.optJSONObject(position).optString("location"));
+        } else {
+            holder.locationText.setText(planItem.optJSONObject(position).optString("city"));
+        }
         if(position == planItem.length() - 1){
             holder.itemView.setPadding((int)(8 * metrics.density), (int)(16 * metrics.density), (int)(8 * metrics.density), (int)(16 * metrics.density));
         }else{
             holder.itemView.setPadding((int)(8 * metrics.density), (int)(16 * metrics.density), (int)(8 * metrics.density), 0);
         }
-        holder.totalExams.setText("Total Exams: "+item.optString("ExamLimitText"));
+        holder.dateText.setText(planItem.optJSONObject(position).optString("created_at").split("T")[0]);
+        holder.status.setText(planItem.optJSONObject(position).optString("status_text"));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
