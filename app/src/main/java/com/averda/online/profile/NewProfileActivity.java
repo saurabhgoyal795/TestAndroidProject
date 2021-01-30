@@ -80,7 +80,7 @@ public class NewProfileActivity extends AppCompatActivity {
         profileLayout = findViewById(R.id.profileLayout);
         lastName = findViewById(R.id.lastnameText);
         organization = findViewById(R.id.organization);
-        country = findViewById(R.id.organization);
+        country = findViewById(R.id.country);
         findViewById(R.id.logoutbutton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
