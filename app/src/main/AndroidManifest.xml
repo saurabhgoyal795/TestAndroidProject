@@ -20,7 +20,7 @@
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:resizeableActivity="false"
-        android:roundIcon="@drawable/logo"
+        android:roundIcon="@drawable/home_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
