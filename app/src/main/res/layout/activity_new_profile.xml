@@ -45,6 +45,7 @@
                         android:layout_height="24dp"
                         android:tint="@color/colorPrimary"
                         android:layout_marginLeft="42dp"
+                        android:visibility="gone"
                         android:src="@drawable/cb_ic_edit_black" />
                 </RelativeLayout>
 
@@ -60,24 +61,13 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/branchName"
+                    android:id="@+id/cityName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/studentName"
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
-                    android:text="Branch"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/studentCourse"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/branchName"
-                    android:layout_marginTop="4dp"
-                    android:gravity="center_horizontal"
-                    android:visibility="gone"
-                    android:text="RBSE course"
+                    android:text="City"
                     android:textSize="16sp" />
             </RelativeLayout>
 
@@ -164,6 +154,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginLeft="16dp"
+                        android:visibility="gone"
                         android:src="@drawable/cb_ic_edit_black" />
                 </LinearLayout>
             </LinearLayout>
@@ -180,7 +171,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
-                    android:text="Name: "
+                    android:text="First Name: "
                     android:textSize="16sp" />
 
                 <TextView
@@ -192,7 +183,6 @@
                     android:text="-"
                     android:textSize="16sp" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -205,11 +195,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
-                    android:text="Gender: "
+                    android:text="Last Name: "
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/gender"
+                    android:id="@+id/lastnameText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -230,11 +220,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
-                    android:text="DOB: "
+                    android:text="City: "
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/dateOfbirth"
+                    android:id="@+id/cityVal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -255,11 +245,36 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
-                    android:text="Address: "
+                    android:text="Country: "
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/address"
+                    android:id="@+id/country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_horizontal"
+                    android:text="-"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_horizontal"
+                    android:text="Organization: "
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/organization"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -287,6 +302,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/list_selector_transparent_5_black"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:orientation="horizontal"
                     android:padding="16dp">
 

@@ -75,8 +75,8 @@ public class Utils {
         Preferences.put(context, Preferences.KEY_STUDENT_PHONE, data.optString("phone"));
         Preferences.put(context, Preferences.KEY_STUDENT_TYPE, data.optInt("is_admin"));
         Preferences.put(context, Preferences.KEY_CITY, data.optString("city"));
-        Preferences.put(context, Preferences.KEY_COUNTRY, data.optString("StudentCode"));
-        Preferences.put(context, Preferences.KEY_ORGANISATION, data.optString("CourseName"));
+        Preferences.put(context, Preferences.KEY_COUNTRY, data.optString("country"));
+        Preferences.put(context, Preferences.KEY_ORGANISATION, data.optString("organization"));
     }
 
     public static boolean isValidEmailAddress(String email){

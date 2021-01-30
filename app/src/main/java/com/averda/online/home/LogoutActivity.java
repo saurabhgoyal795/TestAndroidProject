@@ -78,18 +78,14 @@ public class LogoutActivity extends AppCompatActivity {
 
     public void resetValues(){
         Preferences.remove(this, Preferences.KEY_STUDENT_ID);
-        Preferences.remove(this, Preferences.KEY_SPEC_ID);
-        Preferences.remove(this, Preferences.KEY_COURSE_ID);
-        Preferences.remove(this, Preferences.KEY_STUDENT_CODE);
         Preferences.remove(this, Preferences.KEY_STUDENT_NAME);
+        Preferences.remove(this, Preferences.KEY_STUDENT_LAST_NAME);
         Preferences.remove(this, Preferences.KEY_STUDENT_EMAIL);
         Preferences.remove(this, Preferences.KEY_STUDENT_PHONE);
-        Preferences.remove(this, Preferences.KEY_COURSE_NAME);
-        Preferences.remove(this, Preferences.KEY_SPEC_NAME);
-        Preferences.remove(this, Preferences.KEY_STUDENT_ROLLNO);
-        Preferences.remove(this, Preferences.KEY_STUDENT_PROFILE_PIC);
-        Preferences.remove(this, Preferences.KEY_IS_LOGIN_COMPLTED);
-        Preferences.remove(this, Preferences.KEY_CART_COUNT);
+        Preferences.remove(this, Preferences.KEY_STUDENT_TYPE);
+        Preferences.remove(this, Preferences.KEY_CITY);
+        Preferences.remove(this, Preferences.KEY_COUNTRY);
+        Preferences.remove(this, Preferences.KEY_ORGANISATION);
         Preferences.remove(this, Preferences.KEY_IS_WELCOME_MSG_SHOWN);
         Preferences.remove(this, Preferences.KEY_IS_NEW_USER);
 
