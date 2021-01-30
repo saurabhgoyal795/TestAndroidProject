@@ -70,7 +70,7 @@ public class NewProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_profile);
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        profile = findViewById(R.id.profile);
+        profile = findViewById(R.id.profileImage);
         studentName = findViewById(R.id.studentName);
         branchName = findViewById(R.id.branchName);
         studentCourse = findViewById(R.id.studentCourse);

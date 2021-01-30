@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@drawable/backgroundapp">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,185 +17,30 @@
                 android:id="@+id/bannerImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scaleType="centerCrop"
-                android:src="@drawable/samplepackage"/>
+                android:scaleType="fitXY"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:layout_marginTop="32dp"
+                android:src="@drawable/waste_material"/>
             <LinearLayout
                 android:id="@+id/mainLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
-                android:orientation="vertical"
-                android:visibility="gone">
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/freeDemo"
-                        android:orientation="vertical">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:minWidth="80dp"
-                                android:text="Start Date: "
-                                android:textColor="@color/ca_blue"
-                                android:alpha=".87"
-                                android:textSize="16sp"/>
-                            <TextView
-                                android:id="@+id/startDate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textColor="@color/ca_blue"
-                                android:alpha=".87"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_alignParentRight="true">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:minWidth="80dp"
-                                android:text="End Date: "
-                                android:textColor="@color/ca_blue"
-                                android:alpha=".87"
-                                android:textSize="16sp"/>
-                            <TextView
-                                android:id="@+id/endDate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textColor="@color/ca_blue"
-                                android:alpha=".87"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                    <TextView
-                        android:id="@+id/freeDemo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:text="Free demo test"
-                        android:background="@drawable/button_red_rounded"
-                        android:textColor="@color/white"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:textAllCaps="true"
-                        android:visibility="gone"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:alpha=".87"
-                        android:textSize="12sp"/>
-                </RelativeLayout>
-                <RelativeLayout
+                android:orientation="vertical">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recylerView"
+                    android:layout_marginTop="32dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Total Exams: "
-                            android:textColor="@color/ca_blue"
-                            android:alpha=".87"
-                            android:textSize="16sp"/>
-                        <TextView
-                            android:id="@+id/totalTests"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="-"
-                            android:textColor="@color/ca_blue"
-                            android:alpha=".87"
-                            android:textSize="16sp"/>
-                    </LinearLayout>
-                    <TextView
-                        android:id="@+id/schedule"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:text="View Schedule"
-                        android:background="@drawable/button_red_rounded"
-                        android:textColor="@color/white"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:textAllCaps="true"
-                        android:visibility="gone"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:alpha=".87"
-                        android:textSize="12sp"/>
-                </RelativeLayout>
-                <com.averda.online.views.ZTWebView
-                    android:id="@+id/description"
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginLeft="-18dp"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="32dp"
+                    android:scrollbars="vertical">
+                </androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-    <View
-        android:id="@+id/bottomLayoutShadow"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_above="@+id/bottomLayout"
-        android:background="@drawable/shadow_bottom"/>
-    <RelativeLayout
-        android:id="@+id/bottomLayout"
-        android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_alignParentBottom="true">
-        <RelativeLayout
-            android:layout_above="@+id/navigation"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:background="@color/white">
-            <TextView
-                android:id="@+id/priceView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Rs 4000 Rs 3000"
-                android:layout_toLeftOf="@+id/buyButton"
-                android:textSize="16sp"
-                android:textColor="@color/ca_blue"
-                android:alpha=".87"
-                android:textStyle="bold"
-                android:layout_centerVertical="true" />
-            <TextView
-                android:id="@+id/buyButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/button_blue_rounded_25dp"
-                android:text="Buy now"
-                android:textSize="12sp"
-                android:textColor="@color/white"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:foreground="@drawable/list_selector_transparent_5_black_borderless"
-                android:paddingTop="10dp"
-                android:textAllCaps="true"
-                android:paddingBottom="10dp"/>
-        </RelativeLayout>
+
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/navigation"
             android:layout_width="match_parent"
@@ -211,7 +56,6 @@
             android:layout_height="1dp"
             android:background="@color/white"
             android:layout_above="@+id/navigation"/>
-    </RelativeLayout>
     <RelativeLayout
         android:id="@+id/progressBar"
         android:layout_width="match_parent"

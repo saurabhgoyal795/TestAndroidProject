@@ -85,9 +85,9 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
         } else if (id < 100) {
             idVal = "0"+id;
         }
-        holder.planText.setText("ID :"+ idVal);
+        holder.planText.setText("ID : "+ idVal);
         if (planItem.optJSONObject(position).has("location")) {
-            holder.locationText.setText(planItem.optJSONObject(position).optString("location"));
+            holder.locationText.setText(planItem.optJSONObject(position).optString("location").toUpperCase());
         } else {
             holder.locationText.setText(planItem.optJSONObject(position).optString("city"));
         }
@@ -97,7 +97,7 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
             holder.itemView.setPadding((int)(8 * metrics.density), (int)(16 * metrics.density), (int)(8 * metrics.density), 0);
         }
         holder.dateText.setText(planItem.optJSONObject(position).optString("created_at").split("T")[0]);
-        holder.status.setText(planItem.optJSONObject(position).optString("status_text"));
+        holder.status.setText(planItem.optJSONObject(position).optString("status_text").toUpperCase());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.averda.online.testseries.TestPackageDetailsActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.averda.online.BaseApplication;
@@ -157,7 +158,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu, menu);
         defaultMenu = menu;
-        setCount(this);
         return true;
     }
 
@@ -167,23 +167,15 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
             return true;
         }
         switch (item.getItemId()) {
-            case R.id.cart:
-                openCart();
-                return true;
-            case R.id.profile:
-                openProfile();
-                return true;
-            case R.id.notification:
-                 openNotification();
+            case R.id.formOpen:
+                openNewForm();
                 return true;
         }
         return (super.onOptionsItemSelected(item));
     }
 
-    private void openCart(){
-    }
-
-    private void openNotification() {
+    private void openNewForm(){
+        startActivity(new Intent(this, TestPackageDetailsActivity.class));
     }
 
     private void openProfile(){
@@ -195,47 +187,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     protected void onStart() {
         super.onStart();
         setProfileImage();
-    }
-
-    public void setCount(Context context) {
-        if(defaultMenu == null){
-            return;
-        }
-        int count = Preferences.get(getApplicationContext(), Preferences.KEY_CART_COUNT, -1);
-        if(count >= 0){
-            MenuItem menuItem = defaultMenu.findItem(R.id.cart);
-            LayerDrawable icon = (LayerDrawable) menuItem.getIcon();
-            Drawable reuse = icon.findDrawableByLayerId(R.id.cartCount);
-            CountDrawable badge;
-            if (reuse != null && reuse instanceof CountDrawable) {
-                badge = (CountDrawable) reuse;
-            } else {
-                badge = new CountDrawable(context);
-            }
-            badge.setCount(count+"");
-            icon.mutate();
-            icon.setDrawableByLayerId(R.id.cartCount, badge);
-        }
-    }
-
-    public void setNotificationCount(Context context, int count) {
-        if(defaultMenu == null){
-            return;
-        }
-        if(count >= 0){
-            MenuItem menuItem = defaultMenu.findItem(R.id.notification);
-            LayerDrawable icon = (LayerDrawable) menuItem.getIcon();
-            Drawable reuse = icon.findDrawableByLayerId(R.id.notificationCount);
-            CountDrawable badge;
-            if (reuse != null && reuse instanceof CountDrawable) {
-                badge = (CountDrawable) reuse;
-            } else {
-                badge = new CountDrawable(context);
-            }
-            badge.setCount(count+"");
-            icon.mutate();
-            icon.setDrawableByLayerId(R.id.notificationCount, badge);
-        }
     }
 
     @Override
@@ -277,7 +228,6 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
                         isDrawerClose = true;
                         break;
                     case 4:  //my cart
-                        openCart();
                         isDrawerClose = true;
                         break;
                     case 5:  //my downloads
