@@ -52,7 +52,7 @@ public class HomeFragment extends Fragment {
         JSONObject params = new JSONObject();
         Log.d("HomeFragment", "id: "+ Utils.getStudentId(getActivity()));
         try{
-            params.put("user_id",  3);
+            params.put("user_id",  Utils.getStudentId(getActivity()));
         }catch (Exception e){
             if(Utils.isDebugModeOn){
                 e.printStackTrace();

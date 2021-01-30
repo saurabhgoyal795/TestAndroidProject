@@ -396,8 +396,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             String mime = getMimeType(filePath);
 
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-//                    .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
-                    .addFormDataPart("user_id", 3+"")
+                    .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
                     .addFormDataPart("comment", "")
                     .addFormDataPart("latitude", "123456")
                     .addFormDataPart("longitude", "1234568")
