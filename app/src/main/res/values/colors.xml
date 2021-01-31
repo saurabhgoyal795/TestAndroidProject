@@ -5,8 +5,8 @@
 		30% — 4D 25% — 40 20% — 33 15% — 26 10% — 1A 5% — 0D 0% — 00
 	-->
 <resources>
-    <color name="colorPrimary">#c22526</color>
-    <color name="colorPrimaryDark">#c22526</color>
+    <color name="colorPrimary">#489cf4</color>
+    <color name="colorPrimaryDark">#489cf4</color>
     <color name="colorAccent">#80c22526</color>
     <color name="ca_green_20_darker">#FF3ba38d</color>
     <color name="ca_green_10_darker">#FF42B59D</color>

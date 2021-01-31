@@ -27,12 +27,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.averda.online.cropper.CropImage;
 import com.averda.online.cropper.CropImageView;
 import com.averda.online.profile.NewProfileActivity;
+import com.averda.online.utils.GpsTracker;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.averda.online.R;
@@ -73,13 +76,22 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private int RESULT_LOAD_IMG = 200;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 190;
     String imagePath = "";
-
+    private GpsTracker gpsTracker;
+    private String tvLatitude,tvLongitude;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_details);
         metrics = Utils.getMetrics(this);
         bannerImage = findViewById(R.id.bannerImage);
+        try {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        gpsTracker = new GpsTracker(TestPackageDetailsActivity.this);
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
             String item = bundle.getString("item");
@@ -92,6 +104,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 }
             }
 //            setImageViewSize();
+
             setBannerImage();
             findViewById(R.id.submitButton).setVisibility(View.GONE);
         } else {
@@ -132,6 +145,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         findViewById(R.id.submitButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (imagePath.trim().equalsIgnoreCase("")) {
                    Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
                 } else {
@@ -147,6 +161,19 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 }
             }
         });
+        getLocation();
+    }
+
+    public void getLocation(){
+
+        if(gpsTracker.canGetLocation()){
+            double latitude = gpsTracker.getLatitude();
+            double longitude = gpsTracker.getLongitude();
+            tvLatitude = String.valueOf(latitude);
+            tvLongitude = String.valueOf(longitude);
+        }else{
+            gpsTracker.showSettingsAlert();
+        }
     }
 
     private void setDataArray() {
@@ -398,8 +425,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
                     .addFormDataPart("comment", "")
-                    .addFormDataPart("latitude", "123456")
-                    .addFormDataPart("longitude", "1234568")
+                    .addFormDataPart("latitude", tvLatitude)
+                    .addFormDataPart("longitude", tvLongitude)
                     .addFormDataPart("questions", adapter.getItemCheckedList())
                     .addFormDataPart("image", new File(filePath).getName(), RequestBody.create(MediaType.parse(mime), new File(filePath)))
                     .build();

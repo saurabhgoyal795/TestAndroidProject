@@ -3,11 +3,13 @@ package com.averda.online.testseries;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +30,7 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
 
     protected class TestPlanViewHolder extends RecyclerView.ViewHolder {
         private ImageView planImage;
+        private LinearLayout layout;
         private TextView planText;
         private TextView dateText;
         private TextView locationText;
@@ -35,6 +38,7 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
         public TestPlanViewHolder(View v) {
             super(v);
             planImage = v.findViewById(R.id.planImage);
+            layout = v.findViewById(R.id.view);
             planText = v.findViewById(R.id.planText);
             dateText = v.findViewById(R.id.dateText);
             locationText = v.findViewById(R.id.locationText);
@@ -98,7 +102,7 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
         }
         holder.dateText.setText(planItem.optJSONObject(position).optString("created_at").split("T")[0]);
         holder.status.setText(planItem.optJSONObject(position).optString("status_text").toUpperCase());
-
+      //  holder.layout.setBackgroundColor(Color.parseColor(planItem.optJSONObject(position).optString("status_color")));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
