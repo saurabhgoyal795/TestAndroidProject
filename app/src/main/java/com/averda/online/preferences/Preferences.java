@@ -30,6 +30,7 @@ public final class Preferences {
 	public static final String KEY_STUDENT_ROLLNO = "STUDENT_ROLLNO";
 	public static final String KEY_STUDENT_PROFILE_PIC = "STUDENT_PROFILE_PIC";
 	public static final String KEY_IS_LOGIN_COMPLTED = "IS_LOGIN_COMPLTED";
+	public static final String KEY_LOGIN_TYPE = "KEY_LOGIN_TYPE";
 	public static final String KEY_CART_COUNT = "CART_COUNT";
 	public static final String KEY_IS_WELCOME_MSG_SHOWN = "IS_WELCOME_MSG_SHOWN";
 	public static final String KEY_IS_NEW_USER = "IS_NEW_USER";

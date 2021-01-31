@@ -62,43 +62,45 @@ public class LogoutActivity extends AppCompatActivity {
     }
     private void logout(){
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        String deviceType = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        ServerApi.logoutDevice(this, Utils.getStudentId(this), deviceType, new ServerApi.CompleteListener() {
-            @Override
-            public void response(JSONObject response) {
-                resetValues();
-            }
-
-            @Override
-            public void error(String error) {
-
-            }
-        });
+        resetValues();
+//        String deviceType = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+//        ServerApi.logoutDevice(this, Utils.getStudentId(this), deviceType, new ServerApi.CompleteListener() {
+//            @Override
+//            public void response(JSONObject response) {
+//                resetValues();
+//            }
+//
+//            @Override
+//            public void error(String error) {
+//
+//            }
+//        });
     }
 
     public void resetValues(){
-        Preferences.remove(this, Preferences.KEY_STUDENT_ID);
-        Preferences.remove(this, Preferences.KEY_STUDENT_NAME);
-        Preferences.remove(this, Preferences.KEY_STUDENT_LAST_NAME);
-        Preferences.remove(this, Preferences.KEY_STUDENT_EMAIL);
-        Preferences.remove(this, Preferences.KEY_STUDENT_PHONE);
-        Preferences.remove(this, Preferences.KEY_STUDENT_TYPE);
-        Preferences.remove(this, Preferences.KEY_CITY);
-        Preferences.remove(this, Preferences.KEY_COUNTRY);
-        Preferences.remove(this, Preferences.KEY_ORGANISATION);
-        Preferences.remove(this, Preferences.KEY_IS_WELCOME_MSG_SHOWN);
+//        Preferences.remove(this, Preferences.KEY_STUDENT_ID);
+//        Preferences.remove(this, Preferences.KEY_STUDENT_NAME);
+//        Preferences.remove(this, Preferences.KEY_STUDENT_LAST_NAME);
+//        Preferences.remove(this, Preferences.KEY_STUDENT_EMAIL);
+//        Preferences.remove(this, Preferences.KEY_STUDENT_PHONE);
+//        Preferences.remove(this, Preferences.KEY_STUDENT_TYPE);
+//        Preferences.remove(this, Preferences.KEY_CITY);
+//        Preferences.remove(this, Preferences.KEY_COUNTRY);
+//        Preferences.remove(this, Preferences.KEY_ORGANISATION);
+//        Preferences.remove(this, Preferences.KEY_IS_WELCOME_MSG_SHOWN);
+//        Preferences.remove(this, Preferences.KEY_IS_NEW_USER);
+//
+//        Utils.deleteObject(this, "homenews");
+//        Utils.deleteObject(this, "packages_0");
+//        Utils.deleteObject(this, "OnlineClassPackages_0");
+//        Utils.deleteObject(this, "homeAchivements");
+//        Utils.deleteObject(this, "notifications");
+//        Utils.deleteObject(this, "videoImages");
+//        Utils.deleteObject(this, "profile");
+//        Utils.deleteObject(this, "books");
+//        Utils.deleteObject(this, "seriesDetails");
         Preferences.remove(this, Preferences.KEY_IS_NEW_USER);
-
-        Utils.deleteObject(this, "homenews");
-        Utils.deleteObject(this, "packages_0");
-        Utils.deleteObject(this, "OnlineClassPackages_0");
-        Utils.deleteObject(this, "homeAchivements");
-        Utils.deleteObject(this, "notifications");
-        Utils.deleteObject(this, "videoImages");
-        Utils.deleteObject(this, "profile");
-        Utils.deleteObject(this, "books");
-        Utils.deleteObject(this, "seriesDetails");
-
+        Preferences.remove(this, Preferences.KEY_LOGIN_TYPE);
         new Thread(new Runnable() {
             @Override
             public void run() {

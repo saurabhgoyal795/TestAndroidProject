@@ -100,6 +100,15 @@ public class Utils {
     public static boolean isLoginCompleted(Context context){
         return Preferences.get(context, Preferences.KEY_IS_LOGIN_COMPLTED, false);
     }
+    public static boolean isAdmin(Context context){
+        int value = Preferences.get(context, Preferences.KEY_LOGIN_TYPE, 0);
+        if(value==0){
+            return false;
+        }else{
+            return true;
+        }
+
+    }
 
     public static String getPhone(Context context){
         return Preferences.get(context, Preferences.KEY_STUDENT_PHONE, "");

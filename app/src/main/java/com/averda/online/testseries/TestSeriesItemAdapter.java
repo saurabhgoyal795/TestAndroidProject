@@ -70,8 +70,10 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
         }
         if (planItem.optJSONObject(position).optInt("is_checked") == 1) {
             holder.checkBox.setChecked(true);
+            holder.checkBox.setButtonDrawable(R.drawable.checkboxselect);
         } else {
             holder.checkBox.setChecked(false);
+            holder.checkBox.setButtonDrawable(R.drawable.checkbox);
         }
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -80,6 +82,7 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
                 if (isChecked ) {
                     try {
                         itemObj.put("is_checked", 1);
+                        holder.checkBox.setButtonDrawable(R.drawable.checkboxselect);
                         planItem.put(position, itemObj);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -87,6 +90,7 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
                 } else {
                     try {
                         itemObj.put("is_checked", 0);
+                        holder.checkBox.setButtonDrawable(R.drawable.checkbox);
                         planItem.put(position, itemObj);
                     } catch (JSONException e) {
                         e.printStackTrace();

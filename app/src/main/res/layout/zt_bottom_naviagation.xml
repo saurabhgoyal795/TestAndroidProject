@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="56dp"
+
     android:background="@color/colorPrimary"
     android:id="@+id/ztNavigation"
     android:layout_alignParentBottom="true">
@@ -96,7 +97,7 @@
             android:id="@+id/profileTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Profile"
+            android:text="My Profile2"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="12sp"/>

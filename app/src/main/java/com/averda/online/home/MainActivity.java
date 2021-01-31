@@ -60,6 +60,7 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     private HashMap<String, List<String>> listDataChild;
     private ExpandableListAdapter listAdapter;
     private List<String> listDataHeader;
+    boolean isAdmin;
     private int[] icons = {R.drawable.baseline_home_black_24,
             R.drawable.baseline_group_black_24,
             R.drawable.baseline_account_circle_white_24,
@@ -99,6 +100,7 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
         ((TextView)findViewById(R.id.userName)).setText(Utils.getName(this));
         findViewById(R.id.userImage).setOnClickListener(this);
         navView.getMenu().getItem(0).setChecked(true);
+        isAdmin = Utils.isAdmin(getApplicationContext());
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -176,7 +178,12 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
     }
 
     private void openNewForm(){
-        startActivity(new Intent(this, TestPackageDetailsActivity.class));
+        if(isAdmin){
+            startActivity(new Intent(this, TestPackageDetailsActivity.class));
+        }else{
+            startActivity(new Intent(this, TestPackageDetailsActivity.class));
+        }
+
     }
 
     private void openProfile(){

@@ -225,6 +225,8 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
                     if (data != null) {
                         Utils.setUserProperties(LoginActivity.this, data);
                     }
+                    int flag = data.optInt("is_admin");
+                    Preferences.put(getApplicationContext(), Preferences.KEY_LOGIN_TYPE, flag);
                     Preferences.put(getApplicationContext(), Preferences.KEY_IS_LOGIN_COMPLTED, true);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

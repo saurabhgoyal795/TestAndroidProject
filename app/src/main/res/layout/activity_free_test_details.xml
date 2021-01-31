@@ -202,8 +202,9 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_alignParentBottom="true"
+            app:itemIconSize="40dp"
             app:itemTextColor="@color/white"
-            app:itemIconTint="@color/white"
+            app:itemIconTint="@color/colorFooter"
             android:background="@color/colorPrimary"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/navigation" />

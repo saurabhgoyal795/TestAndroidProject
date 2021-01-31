@@ -151,6 +151,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:paddingLeft="16dp"
+            app:itemIconSize="40dp"
             android:paddingRight="16dp"
             android:background="@color/white"
             android:layout_above="@+id/navigation">
@@ -190,6 +191,7 @@
             app:itemTextColor="@color/white"
             app:itemIconTint="@color/white"
             android:hapticFeedbackEnabled="true"
+            app:itemIconSize="40dp"
             android:layout_alignParentBottom="true"
             android:background="@color/colorPrimary"
             app:labelVisibilityMode="labeled"

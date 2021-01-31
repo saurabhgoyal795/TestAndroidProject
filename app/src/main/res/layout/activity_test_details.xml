@@ -19,6 +19,15 @@
                 android:paddingRight="32dp"
                 android:layout_marginTop="32dp"
                 android:src="@drawable/waste_material"/>
+            <Spinner
+                android:id="@+id/statusSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+               android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                android:background="@drawable/edit_box_style"/>
             <RelativeLayout
                 android:id="@+id/mainLayout"
                 android:layout_width="match_parent"
@@ -30,23 +39,9 @@
                     android:layout_marginTop="32dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_above="@+id/queryBox"
+                    android:layout_above="@+id/submitButton"
                     android:scrollbars="vertical">
                 </androidx.recyclerview.widget.RecyclerView>
-                <EditText
-                    android:id="@+id/queryBox"
-                    android:layout_width="match_parent"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:gravity="left"
-                    android:hint="Write your comment here"
-                    android:minLines="2"
-                    android:textSize="16sp"
-                    android:padding="10dp"
-                    android:layout_above="@+id/submitButton"
-                    android:textColor="@color/ca_blue"
-                    android:background="@drawable/edit_box_style"
-                    android:layout_height="wrap_content"/>
                 <TextView
                     android:id="@+id/submitButton"
                     android:layout_width="match_parent"
@@ -55,7 +50,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/button_red_rounded_4dp"
+                    android:background="@android:color/white"
                     android:gravity="center"
                     android:paddingLeft="16dp"
                     android:layout_marginLeft="32dp"
@@ -64,7 +59,7 @@
                     android:paddingBottom="10dp"
                     android:text="SUBMIT"
                     android:textAllCaps="true"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="16sp" />
             </RelativeLayout>
         </LinearLayout>
@@ -76,7 +71,8 @@
             android:layout_height="56dp"
             android:layout_alignParentBottom="true"
             app:itemTextColor="@color/white"
-            app:itemIconTint="@color/white"
+            app:itemIconTint="@color/colorFooter"
+            app:itemIconSize="40dp"
             android:background="@color/colorPrimary"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/navigation" />

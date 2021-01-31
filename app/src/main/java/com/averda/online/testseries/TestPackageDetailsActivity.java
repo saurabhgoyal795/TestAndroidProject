@@ -20,8 +20,11 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +38,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.averda.online.cropper.CropImage;
 import com.averda.online.cropper.CropImageView;
+import com.averda.online.home.MainActivity;
+import com.averda.online.login.LoginActivity;
 import com.averda.online.profile.NewProfileActivity;
 import com.averda.online.utils.GpsTracker;
 import com.bumptech.glide.Glide;
@@ -47,12 +52,15 @@ import com.averda.online.utils.Utils;
 import com.averda.online.views.ZTWebView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -61,7 +69,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
 
-public class TestPackageDetailsActivity extends ZTAppCompatActivity implements View.OnClickListener {
+public class TestPackageDetailsActivity extends ZTAppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     private ImageView bannerImage;
     private EditText commentBox;
     private DisplayMetrics metrics;
@@ -80,13 +88,17 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     String imagePath = "";
     private GpsTracker gpsTracker;
     private String tvLatitude,tvLongitude;
+    Spinner statusSpinner;
+    boolean isAdmin;
+    String statusId;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_details);
         metrics = Utils.getMetrics(this);
+        statusSpinner = findViewById(R.id.statusSpinner);
         bannerImage = findViewById(R.id.bannerImage);
-        commentBox = findViewById(R.id.queryBox);
+      //  commentBox = findViewById(R.id.queryBox);
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
@@ -95,6 +107,10 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             e.printStackTrace();
         }
         gpsTracker = new GpsTracker(TestPackageDetailsActivity.this);
+        isAdmin = Utils.isAdmin(getApplicationContext());
+        if(isAdmin){
+            statusSpinner.setVisibility(View.VISIBLE);
+        }
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
             String item = bundle.getString("item");
@@ -109,7 +125,11 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
 //            setImageViewSize();
 
             setBannerImage();
+
+
+            if(!isAdmin){
             findViewById(R.id.submitButton).setVisibility(View.GONE);
+            }
         } else {
 //            setImageViewSize();
             setCameraImage();
@@ -148,23 +168,67 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         findViewById(R.id.submitButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (imagePath.trim().equalsIgnoreCase("")) {
-                   Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                uploadProfileImage(imagePath);
-                            } catch (Exception e) {
-                            }
+                    if(!isAdmin) {
+                        if (imagePath.trim().equalsIgnoreCase("")) {
+                            Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
+                        } else {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        uploadProfileImage(imagePath);
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }).start();
                         }
-                    }).start();
-                }
+                    }else{
+                        updateStatus();
+                    }
             }
         });
         getLocation();
+        JSONObject params = new JSONObject();
+        try{
+            params.put("StudentId",  Utils.getStudentId(getApplicationContext()));
+        }catch (Exception e){
+            if(Utils.isDebugModeOn){
+                e.printStackTrace();
+            }
+        }
+        if(isAdmin) {
+            ServerApi.callServerApi(getApplicationContext(), ServerApi.BASE_URL, "getallstatus", params, new ServerApi.CompleteListener() {
+                @Override
+                public void response(JSONObject response) {
+                    String statusCode = response.optString("success");
+                    boolean status = response.optBoolean("success");
+                    if ("true" == statusCode || status) {
+                        JSONArray data = response.optJSONArray("data");
+                        ArrayList<String> statusList = new ArrayList<>();
+                        for (int i = 0; i < data.length(); i++) {
+                            try {
+                                String value = data.getJSONObject(i).getString("title");
+                                statusList.add(value);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                        if (statusList.size() > 0) {
+                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, statusList);
+                            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            statusSpinner.setAdapter(dataAdapter);
+                            statusSpinner.setOnItemSelectedListener(TestPackageDetailsActivity.this);
+                        }
+                    }
+                }
+
+                @Override
+                public void error(String error) {
+                }
+            });
+        }
     }
 
     public void getLocation(){
@@ -415,6 +479,53 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         }
     }
 
+    public boolean updateStatus() {
+        JSONObject params = new JSONObject();
+        try{
+            params.put("request_id", itemObj.getInt("id"));
+            params.put("user_id", itemObj.getInt("users_id"));
+            params.put("status_id", statusId);
+            params.put("admin_comment", "hello");
+        }catch (Exception e){
+            if(Utils.isDebugModeOn){
+                e.printStackTrace();
+            }
+        }
+        ServerApi.callServerApi(this, ServerApi.BASE_URL, "updatestatus", params, new ServerApi.CompleteListener() {
+            @Override
+            public void response(JSONObject response) {
+                if(Utils.isActivityDestroyed(TestPackageDetailsActivity.this)){
+                    return;
+                }
+                findViewById(R.id.progressBar).setVisibility(View.GONE);
+                String statusCode = response.optString("success");
+                if("true"  == statusCode) {
+                    Intent intent = new Intent(TestPackageDetailsActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    String message = response.optString("message");
+                    if(Utils.isValidString(message)) {
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void error(String error) {
+                if(Utils.isActivityDestroyed(TestPackageDetailsActivity.this)){
+                    return;
+                }
+                findViewById(R.id.progressBar).setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
+      return  false;
+
+    }
+
+
     public boolean uploadProfileImage(String filePath) {
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
@@ -518,4 +629,21 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         }
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if(position==0){
+            statusId = "1";
+        }else  if(position==1){
+            statusId = "2";
+        }else  if(position==2){
+            statusId = "3";
+        }else  if(position==3){
+            statusId = "4";
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }
