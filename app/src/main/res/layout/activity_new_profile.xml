@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroundapp"
     tools:context=".profile.NewProfileActivity">
 
     <ScrollView
@@ -55,6 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/imageLayout"
                     android:layout_marginTop="4dp"
+                    android:textColor="#ffffff"
                     android:gravity="center_horizontal"
                     android:text="Student Code"
                     android:textSize="18sp"
@@ -68,6 +70,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="City"
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
             </RelativeLayout>
 
@@ -77,6 +80,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Account Details"
                 android:textSize="16sp"
+                android:textColor="#ffffff"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -92,6 +96,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="Mobile: "
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -101,6 +106,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="-"
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -117,6 +123,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="Email: "
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -126,6 +133,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="-"
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -139,6 +147,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Profile Details"
+                    android:textColor="#ffffff"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -172,6 +181,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="First Name: "
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -179,6 +189,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:textColor="#ffffff"
                     android:gravity="center_horizontal"
                     android:text="-"
                     android:textSize="16sp" />
@@ -196,6 +207,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="Last Name: "
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -205,6 +217,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="-"
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -221,6 +234,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="City: "
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -230,6 +244,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="-"
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -246,6 +261,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="Country: "
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -255,6 +271,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="-"
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -271,6 +288,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="Organization: "
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
 
                 <TextView
@@ -280,6 +298,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center_horizontal"
                     android:text="-"
+                    android:textColor="#ffffff"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -323,13 +342,14 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
+
                         android:layout_toLeftOf="@+id/rightarrow"
                         android:layout_toRightOf="@+id/wallet"
                         android:alpha=".87"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="My Transactions"
-                        android:textColor="@color/ca_blue"
+                        android:textColor="#ffffff"
                         android:textSize="16sp" />
 
                     <ImageView
@@ -340,7 +360,7 @@
                         android:layout_centerVertical="true"
                         android:alpha=".87"
                         android:src="@drawable/rightarrow"
-                        android:tint="@color/ca_blue"
+                        android:textColor="#ffffff"
                         android:visibility="visible" />
                 </RelativeLayout>
 
@@ -359,7 +379,7 @@
                 android:paddingBottom="10dp"
                 android:text="CHAGE PASSWORD"
                 android:textAllCaps="true"
-                android:textColor="@color/white"
+                android:textColor="#ffffff"
                 android:textSize="16sp" />
 
             <TextView
@@ -377,7 +397,7 @@
                 android:paddingBottom="10dp"
                 android:text="SIGN OUT"
                 android:textAllCaps="true"
-                android:textColor="@color/white"
+                android:textColor="#ffffff"
                 android:textSize="16sp" />
 
         </LinearLayout>

@@ -91,6 +91,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     Spinner statusSpinner;
     boolean isAdmin;
     String statusId;
+    String comment= "";
+    String adminComment= "";
     ImageView cameraImage;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,6 +121,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             try {
                 itemObj = new JSONObject(item);
                 dataArray = new JSONArray(itemObj.optString("request_data"));
+                comment  =  itemObj.optString("user_comment");
+                adminComment  =  itemObj.optString("admin_comment");
             }catch (Exception e){
                 if(Utils.isDebugModeOn){
                     e.printStackTrace();
@@ -282,10 +286,10 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private void setList(JSONArray data){
         if (data != null) {
             if(adapter == null) {
-                adapter = new TestSeriesItemAdapter(data,R.layout.plan_item, this);
+                adapter = new TestSeriesItemAdapter(data,comment,isAdmin,R.layout.plan_item, this);
                 mRecyclerView.setAdapter(adapter);
             }else{
-                adapter.refreshAdapter(data);
+                adapter.refreshAdapter(data,comment,isAdmin,adminComment);
             }
         }
     }

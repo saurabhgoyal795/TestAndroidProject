@@ -32,6 +32,9 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
     private Activity context;
     private DisplayMetrics metrics;
     private int imageWidth;
+    private String comment = "";
+    private String adminComment = "";
+    private boolean adminStatus;
 
     protected class TestPlanViewHolder extends RecyclerView.ViewHolder {
         private TextView planText;
@@ -50,8 +53,11 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
         }
     }
 
-    public TestSeriesItemAdapter(JSONArray planItem, int rowLayout, Activity context) {
+    public TestSeriesItemAdapter(JSONArray planItem,String cmt,Boolean isAdmin,String aComment, int rowLayout, Activity context) {
         this.planItem = planItem;
+        this.comment = cmt;
+        this.adminStatus = isAdmin;
+        this.adminComment = aComment;
         this.rowLayout = rowLayout;
         this.context = context;
         metrics = Utils.getMetrics(context);
@@ -109,28 +115,36 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
         }
         );
         if (position == planItem.length() -1) {
-            holder.textViewComment.setVisibility(View.VISIBLE);
-            holder.commentIcon.setVisibility(View.VISIBLE);
-            holder.commentIcon.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            Boolean status =   Utils.isAdmin(context);
+            if(comment.equals("") || status || comment.equals("null")) {
+                holder.textViewComment.setVisibility(View.VISIBLE);
+                holder.commentIcon.setVisibility(View.VISIBLE);
+                holder.commentIcon.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                }
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
 
-                }
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    JSONObject itemObj = planItem.optJSONObject(position);
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        JSONObject itemObj = planItem.optJSONObject(position);
                         try {
                             itemObj.put("comment", editable.toString());
                             planItem.put(position, itemObj);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                }
-            });
+                    }
+                });
+            }else{
+                holder.textViewComment.setVisibility(View.VISIBLE);
+                holder.textViewComment.setText(comment);
+            }
         } else {
             holder.textViewComment.setVisibility(View.GONE);
             holder.commentIcon.setVisibility(View.GONE);
@@ -141,8 +155,10 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
     public int getItemCount() {
         return planItem.length();
     }
-    public void refreshAdapter(JSONArray items) {
+    public void refreshAdapter(JSONArray items, String cmt,Boolean isAdmin,String adminComment) {
         planItem = items;
+        comment = cmt;
+        adminStatus = isAdmin;
         notifyDataSetChanged();
     }
 

@@ -102,8 +102,14 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
         }
         holder.dateText.setText(planItem.optJSONObject(position).optString("created_at").split("T")[0]);
         holder.status.setText(planItem.optJSONObject(position).optString("status_text").toUpperCase());
-
-        holder.layout.setBackgroundColor(Color.parseColor(planItem.optJSONObject(position).optString("status_color")));
+          if(planItem.optJSONObject(position).optString("status_color").equals("green")){
+             holder.layout.setBackgroundResource(R.drawable.green);
+          }else if(planItem.optJSONObject(position).optString("status_color").equals("yellow")){
+              holder.layout.setBackgroundResource(R.drawable.yellow);
+          }else if(planItem.optJSONObject(position).optString("status_color").equals("red")){
+              holder.layout.setBackgroundResource(R.drawable.red);
+          }
+     //   holder.layout.setBackgroundColor(Color.parseColor(planItem.optJSONObject(position).optString("status_color")));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
