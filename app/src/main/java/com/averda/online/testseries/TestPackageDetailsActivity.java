@@ -91,6 +91,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     Spinner statusSpinner;
     boolean isAdmin;
     String statusId;
+    ImageView cameraImage;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +99,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         metrics = Utils.getMetrics(this);
         statusSpinner = findViewById(R.id.statusSpinner);
         bannerImage = findViewById(R.id.bannerImage);
+        cameraImage = findViewById(R.id.cameraImage);
       //  commentBox = findViewById(R.id.queryBox);
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
@@ -130,7 +132,9 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             if(!isAdmin){
             findViewById(R.id.submitButton).setVisibility(View.GONE);
             }
+            cameraImage.setVisibility(View.VISIBLE);
         } else {
+            cameraImage.setVisibility(View.GONE);
 //            setImageViewSize();
             setCameraImage();
             setDataArray();
@@ -458,7 +462,14 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                             File imgFile = new  File(imagePath);
                             if(imgFile.exists()){
                                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                                bannerImage.setImageBitmap(myBitmap);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        bannerImage.setImageBitmap(myBitmap);
+                                        bannerImage.setVisibility(View.VISIBLE);
+                                        cameraImage.setVisibility(View.VISIBLE);
+                                    }
+                                });
                             }
                         } catch (Exception e) {
                             if (Utils.isDebugModeOn) {
@@ -535,7 +546,12 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                     .build();
 
             String mime = getMimeType(filePath);
-
+            if (tvLatitude == null) {
+                tvLatitude = "";
+            }
+            if (tvLongitude == null) {
+                tvLongitude = "";
+            }
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
                     .addFormDataPart("comment", "")
