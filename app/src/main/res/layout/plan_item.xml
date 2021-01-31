@@ -25,8 +25,7 @@
         android:orientation="horizontal"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        android:layout_toLeftOf="@+id/checkBox"
-        android:paddingBottom="16dp">
+        android:layout_toLeftOf="@+id/checkBox">
         <TextView
             android:id="@+id/planText"
             android:layout_width="wrap_content"
@@ -61,11 +60,38 @@
     </RelativeLayout>
 
     </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:text="Comment"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/textViewComment"
+        android:ellipsize="end"
+        android:visibility="gone"
+        android:layout_marginLeft="8dp"
+        android:layout_below="@+id/view"
+        android:layout_marginRight="8dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:minHeight="50dp"
+        android:visibility="gone"
+        android:id="@+id/commentIcon"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:paddingRight="10dp"
+        android:hint="Enter the comment"
+        android:layout_below="@+id/textViewComment"
+        android:background="@drawable/rectangle_box"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:layout_below="@+id/view"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/commentIcon"
         android:background="#22405e"/>
 </RelativeLayout>

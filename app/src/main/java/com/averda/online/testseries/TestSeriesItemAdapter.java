@@ -3,12 +3,15 @@ package com.averda.online.testseries;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,11 +37,16 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
         private TextView planText;
         private TextView textData;
         private CheckBox checkBox;
+        private TextView textViewComment;
+        private EditText commentIcon;
+
         public TestPlanViewHolder(View v) {
             super(v);
             planText = v.findViewById(R.id.planText);
             textData = v.findViewById(R.id.textData);
             checkBox = v.findViewById(R.id.checkBox);
+            textViewComment = v.findViewById(R.id.textViewComment);
+            commentIcon = v.findViewById(R.id.commentIcon);
         }
     }
 
@@ -100,6 +108,33 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
             }
         }
         );
+        if (position == planItem.length() -1) {
+            holder.textViewComment.setVisibility(View.VISIBLE);
+            holder.commentIcon.setVisibility(View.VISIBLE);
+            holder.commentIcon.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    JSONObject itemObj = planItem.optJSONObject(position);
+                        try {
+                            itemObj.put("comment", editable.toString());
+                            planItem.put(position, itemObj);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                }
+            });
+        } else {
+            holder.textViewComment.setVisibility(View.GONE);
+            holder.commentIcon.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -120,5 +155,10 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
             }
         }
         return  questionText;
+    }
+
+    public String getCommentText() {
+        JSONObject itemObj = planItem.optJSONObject(planItem.length() -1);
+        return  itemObj.optString("comment");
     }
 }

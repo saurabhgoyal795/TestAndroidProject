@@ -554,7 +554,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             }
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
-                    .addFormDataPart("comment", "")
+                    .addFormDataPart("comment", adapter.getCommentText())
                     .addFormDataPart("latitude", tvLatitude)
                     .addFormDataPart("longitude", tvLongitude)
                     .addFormDataPart("questions", adapter.getItemCheckedList())
@@ -578,6 +578,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                             if("true"  == statusCode || status) {
                                 Toast.makeText(getApplicationContext(), "Form request submitted successfully", Toast.LENGTH_SHORT).show();
                                 Preferences.put(getApplicationContext(), Preferences.KEY_STUDENT_PROFILE_PIC, imagePath);
+                            } else {
+                                Toast.makeText(getApplicationContext(), object.optString("message"), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }catch (Exception e){
