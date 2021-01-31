@@ -20,6 +20,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +63,7 @@ import okhttp3.RequestBody;
 
 public class TestPackageDetailsActivity extends ZTAppCompatActivity implements View.OnClickListener {
     private ImageView bannerImage;
+    private EditText commentBox;
     private DisplayMetrics metrics;
     private int imageWidth;
     private int imageHeigth;
@@ -84,6 +86,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         setContentView(R.layout.activity_test_details);
         metrics = Utils.getMetrics(this);
         bannerImage = findViewById(R.id.bannerImage);
+        commentBox = findViewById(R.id.queryBox);
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);

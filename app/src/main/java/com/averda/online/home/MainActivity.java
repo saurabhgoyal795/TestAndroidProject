@@ -92,7 +92,8 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
                 this, drawer, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 //        drawer.addDrawerListener(mDrawerToggle);
 //        mDrawerToggle.syncState();
-        setUpDrawer();
+      //  setUpDrawer();
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         HomeFragment homeFragment = new HomeFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commitAllowingStateLoss();
         ((TextView)findViewById(R.id.userName)).setText(Utils.getName(this));
