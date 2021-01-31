@@ -30,7 +30,7 @@
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
         app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
+        app:itemIconTint="@color/colorFooter"
+        app:itemIconSize="40dp"
         app:menu="@menu/navigation" />
 </RelativeLayout>
