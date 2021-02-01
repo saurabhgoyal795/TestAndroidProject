@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -83,6 +84,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private GridLayoutManager mLayoutManager;
     private TestSeriesItemAdapter adapter = null;
     JSONArray dataArray = new JSONArray();
+    JSONArray userArray = new JSONArray();
     private int RESULT_LOAD_IMG = 200;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 190;
     String imagePath = "";
@@ -94,6 +96,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     String comment= "";
     String adminComment= "";
     ImageView cameraImage;
+    TextView userName,city;
+    LinearLayout locationDetail;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +106,9 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         statusSpinner = findViewById(R.id.statusSpinner);
         bannerImage = findViewById(R.id.bannerImage);
         cameraImage = findViewById(R.id.cameraImage);
+        userName = findViewById(R.id.userName);
+        city = findViewById(R.id.city);
+        locationDetail = findViewById(R.id.activity_landing);
       //  commentBox = findViewById(R.id.queryBox);
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
@@ -122,6 +129,9 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 itemObj = new JSONObject(item);
                 dataArray = new JSONArray(itemObj.optString("request_data"));
                 comment  =  itemObj.optString("user_comment");
+                JSONObject  userAr = new JSONObject(itemObj.optString("users"));
+                userName.setText(userAr.optString("first_name")+" "+ userAr.optString("last_name"));
+                city.setText(itemObj.optString("city"));
                 adminComment  =  itemObj.optString("admin_comment");
             }catch (Exception e){
                 if(Utils.isDebugModeOn){
@@ -138,6 +148,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             }
             cameraImage.setVisibility(View.VISIBLE);
         } else {
+            locationDetail.setVisibility(View.INVISIBLE);
             cameraImage.setVisibility(View.GONE);
 //            setImageViewSize();
             setCameraImage();

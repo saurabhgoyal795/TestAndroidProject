@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
 
     protected class TestPlanViewHolder extends RecyclerView.ViewHolder {
         private ImageView planImage;
+        private ImageView location;
         private LinearLayout layout;
         private TextView planText;
         private TextView dateText;
@@ -38,6 +40,7 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
         public TestPlanViewHolder(View v) {
             super(v);
             planImage = v.findViewById(R.id.planImage);
+            location = v.findViewById(R.id.location);
             layout = v.findViewById(R.id.view);
             planText = v.findViewById(R.id.planText);
             dateText = v.findViewById(R.id.dateText);
@@ -116,6 +119,23 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
         }else if(planItem.optJSONObject(position).optString("status_color").equals("blue")){
             holder.layout.setBackgroundResource(R.drawable.blue);
         }
+        holder.location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double lat = planItem.optJSONObject(position).optDouble("latitude");
+                double longt = planItem.optJSONObject(position).optDouble("longitude");
+                String add = "geo:"+lat+","+longt;
+                Uri gmmIntentUri = Uri.parse(add);
+
+// Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+// Make the Intent explicit by setting the Google Maps package
+                mapIntent.setPackage("com.google.android.apps.maps");
+
+// Attempt to start an activity that can handle the Intent
+                context.startActivity(mapIntent);
+            }
+        });
      //   holder.layout.setBackgroundColor(Color.parseColor(planItem.optJSONObject(position).optString("status_color")));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
