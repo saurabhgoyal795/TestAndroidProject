@@ -6,6 +6,7 @@
 	-->
 <resources>
     <color name="colorPrimary">#489cf4</color>
+    <color name="colorButton">#005FAF</color>
     <color name="colorFooter">#0060af</color>
     <color name="colorPrimaryDark">#489cf4</color>
     <color name="colorAccent">#80c22526</color>

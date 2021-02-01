@@ -36,7 +36,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class LoginActivity extends ZTAppCompatActivity implements View.OnClickListener {
+public class NewUser extends ZTAppCompatActivity implements View.OnClickListener {
     private EditText email;
     private EditText password;
     private EditText name;
@@ -70,31 +70,17 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
         otp = findViewById(R.id.otp);
         findViewById(R.id.newUser).setOnClickListener(this);
         findViewById(R.id.loginButton).setOnClickListener(this);
-        findViewById(R.id.signIn).setOnClickListener(this);
         findViewById(R.id.progressBar).setOnClickListener(this);
         findViewById(R.id.contentView).setOnClickListener(this);
         passwordVisibleIcon.setOnClickListener(this);
         deviceType = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        setNewUserLayout();
     }
 
     @Override
     public void onClick(View v) {
         hideKeyboard();
         switch (v.getId()) {
-            case R.id.passwordVisibleIcon:
-                togglePasswordVisiblity();
-                break;
-            case R.id.contentView:
-                hideKeyboard();
-                break;
-            case R.id.progressBar:
-                return;
-            case R.id.signIn:
-                setLoginLayout();
-                break;
-            case R.id.newUser:
-                setNewUserLayout();
-                break;
             case R.id.loginButton:
                 loginButtonClicked();
                 break;
@@ -106,73 +92,63 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)findViewById(R.id.loginView).getLayoutParams();
         params.topMargin = (int)(16 * metrics.density);
         findViewById(R.id.loginView).setLayoutParams(params);
-        findViewById(R.id.emailLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.newUser).setVisibility(View.GONE);
-        findViewById(R.id.passwordLayout).setVisibility(View.GONE);
-        ((TextView) findViewById(R.id.loginButton)).setText(R.string.forget_password);
-        ((TextView) findViewById(R.id.loginMode)).setText(R.string.singup);
-        findViewById(R.id.signIn).setVisibility(View.VISIBLE);
-    }
-
-    private void setLoginLayout() {
-        isSignUpScreen = false;
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)findViewById(R.id.loginView).getLayoutParams();
-        params.topMargin = (int)getResources().getDimension(R.dimen.login_form_top);
-        findViewById(R.id.loginView).setLayoutParams(params);
-        findViewById(R.id.nameLayout).setVisibility(View.GONE);
-        findViewById(R.id.nameLayout2).setVisibility(View.GONE);
-        findViewById(R.id.phoneLayout).setVisibility(View.GONE);
-        findViewById(R.id.cityLayout).setVisibility(View.GONE);
+        findViewById(R.id.nameLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.nameLayout2).setVisibility(View.VISIBLE);
+        findViewById(R.id.phoneLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.emailLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.passwordLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.countryLayout).setVisibility(View.GONE);
-        findViewById(R.id.orgainizationLayout).setVisibility(View.GONE);
-        findViewById(R.id.newUser).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.loginButton)).setText(R.string.singin);
-        ((TextView) findViewById(R.id.loginMode)).setText(R.string.singin);
-        findViewById(R.id.signIn).setVisibility(View.GONE);
+        findViewById(R.id.cityLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.countryLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.orgainizationLayout).setVisibility(View.VISIBLE);
+
+        findViewById(R.id.newUser).setVisibility(View.GONE);
+        ((TextView) findViewById(R.id.loginButton)).setText(R.string.singup);
+        ((TextView) findViewById(R.id.loginMode)).setText(R.string.singup);
     }
+
 
 
 
     private void loginButtonClicked() {
-
-             if (isSignUpScreen) {
-                 if (!Utils.isValidEmailAddress(email.getText().toString())) {
-                     Toast.makeText(getApplicationContext(), "Invalid email id", Toast.LENGTH_SHORT).show();
-                 }else{
-                     findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-                     signUp();
-                 }
-            } else {
-                 if(checkValidity()) {
-                     findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-                     signIn();
-                 }
-            }
+        if (checkValidity()) {
+            findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+            signUp();
+        }
     }
 
     private void signUp() {
         JSONObject params = new JSONObject();
         try{
+            params.put("first_name", name.getText().toString().trim());
+            params.put("last_name", lastName.getText().toString().trim());
+            params.put("phone", phone.getText().toString().trim());
             params.put("email", email.getText().toString().trim());
-
+            params.put("EmailID", email.getText().toString().trim());
+            params.put("password", password.getText().toString().trim());
+            params.put("city", city.getText().toString().trim());
+            params.put("country", country.getText().toString().trim());
+            params.put("organization", organization.getText().toString().trim());
+            params.put("device_info", Utils.getPhoneDetail());
+            params.put("device_id", deviceType);
         }catch (Exception e){
             if(Utils.isDebugModeOn){
                 e.printStackTrace();
             }
         }
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "forgotpassword", params, new ServerApi.CompleteListener() {
+        ServerApi.callServerApi(this, ServerApi.BASE_URL, "createuser", params, new ServerApi.CompleteListener() {
             @Override
             public void response(JSONObject response) {
-                if(Utils.isActivityDestroyed(LoginActivity.this)){
+                if(Utils.isActivityDestroyed(NewUser.this)){
                     return;
                 }
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
                 String statusCode = response.optString("success");
                 boolean status = response.optBoolean("success");
                 if("true"  == statusCode || status) {
-                    setLoginLayout();
+                    Intent intent = new Intent(NewUser.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                  //  setLoginLayout();
                 }
                 String message = response.optString("message");
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
@@ -180,7 +156,7 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
 
             @Override
             public void error(String error) {
-                if(Utils.isActivityDestroyed(LoginActivity.this)){
+                if(Utils.isActivityDestroyed(NewUser.this)){
                     return;
                 }
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
@@ -204,7 +180,7 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
         ServerApi.callServerApi(this, ServerApi.BASE_URL, "login", params, new ServerApi.CompleteListener() {
             @Override
             public void response(JSONObject response) {
-                if(Utils.isActivityDestroyed(LoginActivity.this)){
+                if(Utils.isActivityDestroyed(NewUser.this)){
                     return;
                 }
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
@@ -212,12 +188,12 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
                 if("true"  == statusCode) {
                     JSONObject data = response.optJSONObject("data");
                     if (data != null) {
-                        Utils.setUserProperties(LoginActivity.this, data);
+                        Utils.setUserProperties(NewUser.this, data);
                     }
                     int flag = data.optInt("is_admin");
                     Preferences.put(getApplicationContext(), Preferences.KEY_LOGIN_TYPE, flag);
                     Preferences.put(getApplicationContext(), Preferences.KEY_IS_LOGIN_COMPLTED, true);
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(NewUser.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
@@ -231,7 +207,7 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
 
             @Override
             public void error(String error) {
-                if(Utils.isActivityDestroyed(LoginActivity.this)){
+                if(Utils.isActivityDestroyed(NewUser.this)){
                     return;
                 }
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
@@ -317,12 +293,7 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
 
     @Override
     public void onBackPressed() {
-        if(isSignUpScreen){
-            setLoginLayout();
-            isSignUpScreen = false;
-        }else{
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 
 

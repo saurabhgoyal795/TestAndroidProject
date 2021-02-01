@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -49,45 +50,32 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
-public class NewProfileActivity extends AppCompatActivity {
+public class NewProfileActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String PROFILE_IMAGE_PATH = "/ProfileImage/profileImage.png";
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 190;
     private int RESULT_LOAD_IMG = 200;
     ImageView profile;
-    TextView studentName;
-    TextView cityName;
-    TextView mobileNumber;
-    TextView emailId;
-    TextView nameText;
-    TextView cityVal;
-    ScrollView profileLayout;
-    TextView lastName;
-    TextView country;
-    TextView organization;
-
+    EditText mobile;
+    EditText email;
+    EditText firstName;
+    EditText lastName;
+    EditText city;
+    EditText country;
+    EditText org;
+    Menu defaultMenu;
+    TextView name;
+    TextView citys;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_profile);
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         profile = findViewById(R.id.profileImage);
-        studentName = findViewById(R.id.studentName);
-        cityName = findViewById(R.id.cityName);
-        mobileNumber = findViewById(R.id.mobileNumber);
-        emailId = findViewById(R.id.emailId);
-        nameText = findViewById(R.id.nameText);
-        cityVal = findViewById(R.id.cityVal);
-        profileLayout = findViewById(R.id.profileLayout);
-        lastName = findViewById(R.id.lastnameText);
-        organization = findViewById(R.id.organization);
-        country = findViewById(R.id.country);
-        findViewById(R.id.logoutbutton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logout();
-            }
-        });
-
+        name = findViewById(R.id.name);
+        citys = findViewById(R.id.cityC);
+        mobile = findViewById(R.id.etMobile);
+        email = findViewById(R.id.etEmail);
+        org = findViewById(R.id.etOrg);
         findViewById(R.id.changepassword).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +101,6 @@ public class NewProfileActivity extends AppCompatActivity {
                 }
                 Utils.saveObject(getApplicationContext(), response.toString(), "profile");
                 JSONObject profileJSONNew = response.optJSONObject("data");
-                profileLayout.setVisibility(View.VISIBLE);
                 setProfileJSON(profileJSONNew);
             }
 
@@ -147,34 +134,34 @@ public class NewProfileActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.pencilIcon).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(NewProfileActivity.this, ProfileActivity.class));
-            }
-        });
-
-        findViewById(R.id.card_view).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(NewProfileActivity.this, TransactionActivity.class));
-            }
-        });
-        profile = findViewById(R.id.profileImage);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.logout_menu, menu);
+        defaultMenu = menu;
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (mDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+        switch (item.getItemId()) {
+            case R.id.logout:
+                logout();
+                return true;
+        }
+        return (super.onOptionsItemSelected(item));
+    }
     private void setProfileJSON(JSONObject data) {
         try {
-            emailId.setText(data.optString("email"));
-            studentName.setText(data.optString("first_name"));
-            nameText.setText(data.optString("first_name"));
-           lastName.setText(data.optString("last_name"));
-            mobileNumber.setText(data.optString("phone"));
-            cityName.setText(data.optString("city"));
-            cityVal.setText(data.optString("city"));
-            country.setText(data.optString("country"));
-            organization.setText(data.optString("organization"));
+            name.setText(data.optString("first_name")+" "+data.optString("last_name"));
+            citys.setText("("+data.optString("city")+", "+data.optString("country")+")");
+            email.setText(data.optString("email"));
+            mobile.setText(data.optString("phone"));
+            org.setText(data.optString("organization"));
         } catch (Exception e) {
 
         }
@@ -237,5 +224,10 @@ public class NewProfileActivity extends AppCompatActivity {
             if (Utils.isDebugModeOn)
                 e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

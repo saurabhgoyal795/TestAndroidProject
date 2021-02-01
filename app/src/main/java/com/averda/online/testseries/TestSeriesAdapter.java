@@ -109,6 +109,13 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
           }else if(planItem.optJSONObject(position).optString("status_color").equals("red")){
               holder.layout.setBackgroundResource(R.drawable.red);
           }
+        if(planItem.optJSONObject(position).optString("status_color").equals("green")){
+            holder.layout.setBackgroundResource(R.drawable.green);
+        }else if(planItem.optJSONObject(position).optString("status_color").equals("yellow")){
+            holder.layout.setBackgroundResource(R.drawable.yellow);
+        }else if(planItem.optJSONObject(position).optString("status_color").equals("blue")){
+            holder.layout.setBackgroundResource(R.drawable.blue);
+        }
      //   holder.layout.setBackgroundColor(Color.parseColor(planItem.optJSONObject(position).optString("status_color")));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

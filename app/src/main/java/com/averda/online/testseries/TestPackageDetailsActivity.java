@@ -286,7 +286,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private void setList(JSONArray data){
         if (data != null) {
             if(adapter == null) {
-                adapter = new TestSeriesItemAdapter(data,comment,isAdmin,R.layout.plan_item, this);
+                adapter = new TestSeriesItemAdapter(data,comment,isAdmin,"",R.layout.plan_item, this);
                 mRecyclerView.setAdapter(adapter);
             }else{
                 adapter.refreshAdapter(data,comment,isAdmin,adminComment);
@@ -582,6 +582,10 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                             if("true"  == statusCode || status) {
                                 Toast.makeText(getApplicationContext(), "Form request submitted successfully", Toast.LENGTH_SHORT).show();
                                 Preferences.put(getApplicationContext(), Preferences.KEY_STUDENT_PROFILE_PIC, imagePath);
+                                Intent intent = new Intent(TestPackageDetailsActivity.this, MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
                             } else {
                                 Toast.makeText(getApplicationContext(), object.optString("message"), Toast.LENGTH_SHORT).show();
                             }
