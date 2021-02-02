@@ -114,41 +114,52 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
             }
         }
         );
-        if (position == planItem.length() -1) {
-            Boolean status =   Utils.isAdmin(context);
-            if(comment.equals("") || status || comment.equals("null")) {
-                holder.textViewComment.setVisibility(View.VISIBLE);
-                holder.commentIcon.setVisibility(View.VISIBLE);
-                holder.commentIcon.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        JSONObject itemObj = planItem.optJSONObject(position);
-                        try {
-                            itemObj.put("comment", editable.toString());
-                            planItem.put(position, itemObj);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }else{
-                holder.textViewComment.setVisibility(View.VISIBLE);
-                holder.textViewComment.setText(comment);
-            }
-        } else {
-            holder.textViewComment.setVisibility(View.GONE);
-            holder.commentIcon.setVisibility(View.GONE);
-        }
+//        if (position == planItem.length() -1) {
+//            Boolean status =   Utils.isAdmin(context);
+//            if(adminStatus) {
+//                if (comment.equals("") || status || comment.equals("null")) {
+//                    holder.textViewComment.setVisibility(View.VISIBLE);
+//                    holder.commentIcon.setVisibility(View.VISIBLE);
+//                    holder.commentIcon.addTextChangedListener(new TextWatcher() {
+//                        @Override
+//                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                        }
+//
+//                        @Override
+//                        public void afterTextChanged(Editable editable) {
+//                            JSONObject itemObj = planItem.optJSONObject(position);
+//                            try {
+//                                itemObj.put("comment", editable.toString());
+//                                planItem.put(position, itemObj);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+//                } else {
+//                    holder.textViewComment.setVisibility(View.VISIBLE);
+//                    holder.textViewComment.setText(comment);
+//                }
+//            }else{
+//                if (comment.equals("") || status || comment.equals("null")){
+//
+//                }else{
+//                    holder.textViewComment.setVisibility(View.VISIBLE);
+//                    holder.textViewComment.setText(comment);
+//                    holder.commentIcon.setVisibility(View.GONE);
+//                }
+//
+//            }
+//        } else {
+//            holder.textViewComment.setVisibility(View.GONE);
+//            holder.commentIcon.setVisibility(View.GONE);
+//        }
     }
 
     @Override

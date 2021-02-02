@@ -21,6 +21,8 @@ import com.averda.online.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.TestPlanViewHolder> {
 
     private JSONArray planItem;
@@ -124,16 +126,9 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
             public void onClick(View v) {
                 double lat = planItem.optJSONObject(position).optDouble("latitude");
                 double longt = planItem.optJSONObject(position).optDouble("longitude");
-                String add = "geo:"+lat+","+longt;
-                Uri gmmIntentUri = Uri.parse(add);
-
-// Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-// Make the Intent explicit by setting the Google Maps package
-                mapIntent.setPackage("com.google.android.apps.maps");
-
-// Attempt to start an activity that can handle the Intent
-                context.startActivity(mapIntent);
+                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", lat, longt);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                context.startActivity(intent);
             }
         });
      //   holder.layout.setBackgroundColor(Color.parseColor(planItem.optJSONObject(position).optString("status_color")));

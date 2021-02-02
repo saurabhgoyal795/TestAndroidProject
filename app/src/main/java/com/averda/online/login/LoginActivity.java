@@ -110,7 +110,7 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
         findViewById(R.id.newUser).setVisibility(View.GONE);
         findViewById(R.id.passwordLayout).setVisibility(View.GONE);
         ((TextView) findViewById(R.id.loginButton)).setText(R.string.forget_password);
-        ((TextView) findViewById(R.id.loginMode)).setText(R.string.singup);
+        ((TextView) findViewById(R.id.loginMode)).setText(R.string.forget_password);
         findViewById(R.id.signIn).setVisibility(View.VISIBLE);
     }
 
@@ -217,6 +217,7 @@ public class LoginActivity extends ZTAppCompatActivity implements View.OnClickLi
                     int flag = data.optInt("is_admin");
                     Preferences.put(getApplicationContext(), Preferences.KEY_LOGIN_TYPE, flag);
                     Preferences.put(getApplicationContext(), Preferences.KEY_IS_LOGIN_COMPLTED, true);
+                    Preferences.put(getApplicationContext(), Preferences.KEY_USER_PASSWORD, password.getText().toString().trim());
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

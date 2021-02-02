@@ -181,39 +181,45 @@ public class NewProfileActivity extends AppCompatActivity implements View.OnClic
             View promptsView = li.inflate(R.layout.changepassword_alert, null);
             EditText oldPass = promptsView.findViewById(R.id.oldPass);
             EditText newPass = promptsView.findViewById(R.id.newPass);
+            String savePass = Utils.userPass(getApplicationContext());
+            oldPass.setText(savePass);
             TextView ok = promptsView.findViewById(R.id.ok);
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dialog.dismiss();
-//                    JSONObject params = new JSONObject();
-//                    try {
-//                        params.put("StudentId", Utils.getStudentId(getApplicationContext()));
-//                        params.put("Passwords", oldPass.getText().toString().trim());
-//                        params.put("NewPassword", newPass.getText().toString().trim());
-//                    } catch (Exception e) {
-//                        if (Utils.isDebugModeOn) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                    findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-//                    ServerApi.callServerApi(getApplicationContext(), ServerApi.BASE_URL, "ChangePassword", params, new ServerApi.CompleteListener() {
-//                        @Override
-//                        public void response(JSONObject response) {
-//                            dialog.dismiss();
-//                            findViewById(R.id.progressBar).setVisibility(View.GONE);
-//                            Toast.makeText(getApplicationContext(), "Successfully Changed Password", Toast.LENGTH_LONG).show();
-//                        }
-//                        @Override
-//                        public void error(String error) {
-//                            dialog.dismiss();
-//                            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-//                            findViewById(R.id.progressBar).setVisibility(View.GONE);
-//                            if (Utils.isActivityDestroyed(NewProfileActivity.this)) {
-//                                return;
-//                            }
-//                        }
-//                    });
+
+                    if(checkValidity(oldPass.getText().toString(),newPass.getText().toString())){
+
+                    }
+                    JSONObject params = new JSONObject();
+                    try {
+                        params.put("user_id", Utils.getStudentId(getApplicationContext()));
+                        params.put("password", newPass.getText().toString().trim());
+                    } catch (Exception e) {
+                        if (Utils.isDebugModeOn) {
+                            e.printStackTrace();
+                        }
+                    }
+                    findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                    ServerApi.callServerApi(getApplicationContext(), ServerApi.BASE_URL, "updatepassword", params, new ServerApi.CompleteListener() {
+                        @Override
+                        public void response(JSONObject response) {
+                            dialog.dismiss();
+                            findViewById(R.id.progressBar).setVisibility(View.GONE);
+                            Preferences.put(getApplicationContext(), Preferences.KEY_USER_PASSWORD, newPass.getText().toString().trim());
+                            Toast.makeText(getApplicationContext(), "Successfully Changed Password", Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        }
+                        @Override
+                        public void error(String error) {
+                            dialog.dismiss();
+                            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+                            findViewById(R.id.progressBar).setVisibility(View.GONE);
+                            if (Utils.isActivityDestroyed(NewProfileActivity.this)) {
+                                return;
+                            }
+                        }
+                    });
                 }
             });
             builder.setView(promptsView);
@@ -224,6 +230,31 @@ public class NewProfileActivity extends AppCompatActivity implements View.OnClic
             if (Utils.isDebugModeOn)
                 e.printStackTrace();
         }
+    }
+
+    private boolean checkValidity(String oldPass,String newPass) {
+        boolean isAllValid = true;
+        StringBuffer errorMsg = new StringBuffer();
+        if (oldPass.equals("")|| oldPass.equals("null")) {
+            errorMsg.append("Please enter old password");
+            errorMsg.append("\n");
+            isAllValid = false;
+        }
+        if (newPass.equals("")|| newPass.equals("null")) {
+            errorMsg.append("Please enter new password");
+            isAllValid = false;
+        }
+        if (!Utils.isValidPassword(newPass)) {
+            if (Utils.isValidString(errorMsg.toString())) {
+                errorMsg.append("\n");
+            }
+            errorMsg.append("Password should be minimum 5 characters");
+            isAllValid = false;
+        }
+        if (!isAllValid) {
+            Toast.makeText(getApplicationContext(), errorMsg.toString(), Toast.LENGTH_SHORT).show();
+        }
+        return isAllValid;
     }
 
     @Override

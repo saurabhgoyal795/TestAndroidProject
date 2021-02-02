@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.averda.online.login.NewUser;
+import com.averda.online.testseries.Form;
 import com.averda.online.testseries.TestPackageDetailsActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -182,7 +183,7 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
         if(isAdmin){
             startActivity(new Intent(this, NewUser.class));
         }else{
-            startActivity(new Intent(this, TestPackageDetailsActivity.class));
+            startActivity(new Intent(this, Form.class));
         }
 
     }

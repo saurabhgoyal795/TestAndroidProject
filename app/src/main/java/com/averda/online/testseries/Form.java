@@ -10,16 +10,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,8 +29,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +64,6 @@ import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -76,8 +73,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 
 
-public class TestPackageDetailsActivity extends ZTAppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
-    private ImageView bannerImage;
+public class Form extends ZTAppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+    private ImageView bannerImage,bannerImageMain;
     private EditText commentBox;
     private DisplayMetrics metrics;
     private int imageWidth;
@@ -95,35 +92,30 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 190;
     String imagePath = "";
     private GpsTracker gpsTracker;
-    private String tvLatitude,tvLongitude;
+    private String tvLatitude,tvLongitude,userComment="";
     Spinner statusSpinner;
     boolean isAdmin;
     String statusId;
     String comment= "";
     String adminComment= "";
-    ImageView cameraImage,location;
-    TextView userName,city,creted,adComment,textViewComment;
+    ImageView cameraImage;
+    TextView userName,city,creted;
     LinearLayout locationDetail;
     RelativeLayout adminLayout;
-    private TableLayout mTableLayout;
+    EditText commentIcon;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_details);
+        setContentView(R.layout.activity_form);
         metrics = Utils.getMetrics(this);
-     //   statusSpinner = findViewById(R.id.statusSpinner);
         bannerImage = findViewById(R.id.bannerImage);
-        location = findViewById(R.id.location);
         cameraImage = findViewById(R.id.cameraImage);
-        userName = findViewById(R.id.userName);
-        city = findViewById(R.id.city);
-        creted = findViewById(R.id.createdOn);
-        adComment = findViewById(R.id.mainComment);
-        textViewComment = findViewById(R.id.textViewComment);
-        locationDetail = findViewById(R.id.activity_landing);
-        adminLayout = findViewById(R.id.adminView);
-      //  commentBox = findViewById(R.id.queryBox);
+        commentIcon = findViewById(R.id.commentIcon);
+        findViewById(R.id.submitButton).setVisibility(View.GONE);
+    //    findViewById(R.id.submitButtons).setVisibility(View.GONE);
+        this.setTitle("Add Request");
+        //  commentBox = findViewById(R.id.queryBox);
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
@@ -131,13 +123,9 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         } catch (Exception e){
             e.printStackTrace();
         }
-
-
-        gpsTracker = new GpsTracker(TestPackageDetailsActivity.this);
+        cameraImage.setVisibility(View.VISIBLE);
+        gpsTracker = new GpsTracker(Form.this);
         isAdmin = Utils.isAdmin(getApplicationContext());
-        if(isAdmin){
-        //    statusSpinner.setVisibility(View.VISIBLE);
-        }
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
             String item = bundle.getString("item");
@@ -145,78 +133,9 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 isAdmin = false;
                 itemObj = new JSONObject(item);
                 dataArray = new JSONArray(itemObj.optString("request_data"));
-                userArray = new JSONArray(itemObj.optString("order_status"));
-                this.setTitle("Request ID #"+itemObj.optString("id"));
                 comment  =  itemObj.optString("user_comment");
                 JSONObject  userAr = new JSONObject(itemObj.optString("users"));
-                userName.setText(itemObj.optString("status_text"));
-                city.setText(itemObj.optString("city"));
-                creted.setText(itemObj.optString("created_at").split("T")[0]);
-                adminComment  =  itemObj.optString("admin_comment");
-                if(adminComment.equals("")|| adminComment.equals("null")){
-                    adminLayout.setVisibility(View.GONE);
-                }else{
-                    adComment.setText(adminComment);
-                    adminLayout.setVisibility(View.VISIBLE);
-                }
-                if(comment.equals("")|| comment.equals("null")){
-                    textViewComment.setText("");
-                }else{
-                    textViewComment.setText(comment);
-
-                }
-                cameraImage.setVisibility(View.INVISIBLE);
-                location.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        double lat = itemObj.optDouble("latitude");
-                        double longt = itemObj.optDouble("longitude");
-//                        String add = "geo:0,0?q=:"+lat+","+longt;
-//                        Uri gmmIntentUri = Uri.parse(add);
-//                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                        mapIntent.setPackage("com.google.android.apps.maps");
-//                        startActivity(mapIntent);
-                        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", lat, longt);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        startActivity(intent);
-                    }
-                });
-
-                    TableLayout tv=(TableLayout) findViewById(R.id.tableInvoices);
-                TableRow tbrow0 = new TableRow(this);
-                TextView tv1 = new TextView(this);
-                tv1.setText(" Status ");
-                tv1.setTextSize(17);
-                tv1.setTextColor(Color.WHITE);
-                tv1.setGravity(Gravity.CENTER);
-                tbrow0.addView(tv1);
-                TextView tv2 = new TextView(this);
-                tv2.setText(" Status Date ");
-                tv2.setTextSize(17);
-                tv2.setTextColor(Color.WHITE);
-                tv2.setGravity(Gravity.CENTER);
-                tbrow0.addView(tv2);
-                tv.addView(tbrow0);
-                for (int i = 0; i < userArray.length(); i++) {
-                    String status = userArray.optJSONObject(i).optString("status_text");
-                    String time = userArray.optJSONObject(i).optString("update_time").split("T")[0];
-                    TableRow tbrow = new TableRow(this);
-                    TextView t2v = new TextView(this);
-                    t2v.setText(status);
-                    t2v.setTextColor(Color.WHITE);
-                    t2v.setGravity(Gravity.CENTER);
-                    tbrow.addView(t2v);
-                    TextView t3v = new TextView(this);
-                    t3v.setText(time);
-                    t3v.setTextColor(Color.WHITE);
-                    t3v.setGravity(Gravity.CENTER);
-                    tbrow.addView(t3v);
-                    tv.addView(tbrow);
-                }
-
-
-
-
+                cameraImage.setVisibility(View.VISIBLE);
             }catch (Exception e){
                 if(Utils.isDebugModeOn){
                     e.printStackTrace();
@@ -228,17 +147,18 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
 
 
             if(!isAdmin){
-            findViewById(R.id.submitButton).setVisibility(View.GONE);
+                findViewById(R.id.submitButton).setVisibility(View.GONE);
             }
-          //  cameraImage.setVisibility(View.VISIBLE);
+            //  cameraImage.setVisibility(View.VISIBLE);
         } else {
             isAdmin = true;
-            adminLayout.setVisibility(View.GONE);
-            locationDetail.setVisibility(View.INVISIBLE);
-            cameraImage.setVisibility(View.GONE);
+//            adminLayout.setVisibility(View.GONE);
+//            locationDetail.setVisibility(View.INVISIBLE);
+           // cameraImage.setVisibility(View.GONE);
 //            setImageViewSize();
             setCameraImage();
             setDataArray();
+         //   findViewById(R.id.submitButtons).setVisibility(View.VISIBLE);
             findViewById(R.id.submitButton).setVisibility(View.VISIBLE);
         }
         findViewById(R.id.progressBar).setVisibility(View.GONE);
@@ -248,16 +168,16 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.navigation_home:
-                        Utils.openHome(TestPackageDetailsActivity.this);
+                        Utils.openHome(Form.this);
                         break;
                     case R.id.navigation_classes:
-                        Utils.openMyPackagesNewTask(TestPackageDetailsActivity.this, 0);
+                        Utils.openMyPackagesNewTask(Form.this, 0);
                         break;
                     case R.id.navigation_test:
-                        Utils.openMyPackagesNewTask(TestPackageDetailsActivity.this, 1);
+                        Utils.openMyPackagesNewTask(Form.this, 1);
                         break;
                     case R.id.navigation_profile:
-                        Utils.openMyProfileNewTask(TestPackageDetailsActivity.this);
+                        Utils.openMyProfileNewTask(Form.this);
                         break;
                 }
                 return false;
@@ -265,9 +185,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         });
         mRecyclerView = findViewById(R.id.recylerView);
         if (mRecyclerView != null) {
-            mRecyclerView.setHasFixedSize(false);
+            mRecyclerView.setHasFixedSize(true);
         }
-
         mRecyclerView.setNestedScrollingEnabled(false);
         mLayoutManager = new GridLayoutManager(getApplicationContext(),1);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -275,21 +194,21 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         findViewById(R.id.submitButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                   // if(!isAdmin) {
-                        if (imagePath.trim().equalsIgnoreCase("")) {
-                            Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
-                        } else {
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        uploadProfileImage(imagePath);
-                                    } catch (Exception e) {
-                                    }
-                                }
-                            }).start();
+                // if(!isAdmin) {
+                if (imagePath.trim().equalsIgnoreCase("")) {
+                    Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                uploadProfileImage(imagePath);
+                            } catch (Exception e) {
+                            }
                         }
-                  //  }
+                    }).start();
+                }
+                //  }
 //                    else{
 //                        updateStatus();
 //                    }
@@ -324,10 +243,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
 
                         }
                         if (statusList.size() > 0) {
-//                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, statusList);
-//                            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//                            statusSpinner.setAdapter(dataAdapter);
-//                            statusSpinner.setOnItemSelectedListener(TestPackageDetailsActivity.this);
+                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, statusList);
+                            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         }
                     }
                 }
@@ -337,6 +254,22 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 }
             });
         }
+        commentIcon.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                            userComment = editable.toString();
+                        }
+                    });
     }
 
     public void getLocation(){
@@ -374,11 +307,11 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
 
             @Override
             public void error(String error) {
-                if(Utils.isActivityDestroyed(TestPackageDetailsActivity.this)){
+                if(Utils.isActivityDestroyed(Form.this)){
                     return;
                 }
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
-                Toast.makeText(TestPackageDetailsActivity.this, error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Form.this, error, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -402,11 +335,10 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     }
 
     private void setCameraImage() {
-        Glide.with(this)
-                .load("")
-                .error(R.drawable.camera)
-                .placeholder(R.drawable.camera)
-                .into(bannerImage);
+//        Glide.with(this)
+//                .load("")
+//                .error(R.drawable.camera)
+//                .into(bannerImage);
         bannerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -557,7 +489,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                 imagePath = result.getUri().getPath();
+                imagePath = result.getUri().getPath();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -569,7 +501,6 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                                     @Override
                                     public void run() {
                                         bannerImage.setImageBitmap(myBitmap);
-                                        bannerImage.setVisibility(View.VISIBLE);
                                         cameraImage.setVisibility(View.INVISIBLE);
                                     }
                                 });
@@ -608,13 +539,13 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         ServerApi.callServerApi(this, ServerApi.BASE_URL, "updatestatus", params, new ServerApi.CompleteListener() {
             @Override
             public void response(JSONObject response) {
-                if(Utils.isActivityDestroyed(TestPackageDetailsActivity.this)){
+                if(Utils.isActivityDestroyed(Form.this)){
                     return;
                 }
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
                 String statusCode = response.optString("success");
                 if("true"  == statusCode) {
-                    Intent intent = new Intent(TestPackageDetailsActivity.this, MainActivity.class);
+                    Intent intent = new Intent(Form.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
@@ -628,19 +559,20 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
 
             @Override
             public void error(String error) {
-                if(Utils.isActivityDestroyed(TestPackageDetailsActivity.this)){
+                if(Utils.isActivityDestroyed(Form.this)){
                     return;
                 }
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
-      return  false;
+        return  false;
 
     }
 
 
     public boolean uploadProfileImage(String filePath) {
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .connectTimeout(60, TimeUnit.SECONDS)
@@ -656,8 +588,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 tvLongitude = "";
             }
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
-                    .addFormDataPart("comment", adapter.getCommentText())
+                    .addFormDataPart("user_id", Utils.getStudentId(Form.this)+"")
+                    .addFormDataPart("comment", userComment)
                     .addFormDataPart("latitude", tvLatitude)
                     .addFormDataPart("longitude", tvLongitude)
                     .addFormDataPart("questions", adapter.getItemCheckedList())
@@ -681,7 +613,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                             if("true"  == statusCode || status) {
                                 Toast.makeText(getApplicationContext(), "Form request submitted successfully", Toast.LENGTH_SHORT).show();
                                 Preferences.put(getApplicationContext(), Preferences.KEY_STUDENT_PROFILE_PIC, imagePath);
-                                Intent intent = new Intent(TestPackageDetailsActivity.this, MainActivity.class);
+                                Intent intent = new Intent(Form.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 finish();

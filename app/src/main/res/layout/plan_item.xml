@@ -70,7 +70,7 @@
         android:id="@+id/textViewComment"
         android:ellipsize="end"
         android:visibility="gone"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="14dp"
         android:layout_below="@+id/view"
         android:layout_marginRight="8dp"/>
     <EditText
@@ -86,12 +86,12 @@
         android:hint="Enter the comment"
         android:layout_below="@+id/textViewComment"
         android:background="@drawable/rectangle_box"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/commentIcon"
-        android:background="#22405e"/>
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="1dp"-->
+<!--        android:paddingLeft="10dp"-->
+<!--        android:paddingRight="10dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:layout_below="@+id/commentIcon"-->
+<!--        android:background="#22405e"/>-->
 </RelativeLayout>

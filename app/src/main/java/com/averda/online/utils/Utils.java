@@ -109,6 +109,11 @@ public class Utils {
         }
 
     }
+    public static String userPass(Context context){
+        String value = Preferences.get(context, Preferences.KEY_USER_PASSWORD, "");
+        return value;
+
+    }
 
     public static String getPhone(Context context){
         return Preferences.get(context, Preferences.KEY_STUDENT_PHONE, "");

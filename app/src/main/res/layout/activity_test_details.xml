@@ -5,54 +5,62 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/backgroundapp">
-
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_above="@+id/navigation"
             android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bordercam"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:orientation="vertical">
-            <ImageView
-                android:id="@+id/bannerImage"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="fitXY"
-                android:cropToPadding="true"
-                android:adjustViewBounds="true"
-                android:padding="10dp" />
-             </LinearLayout>
-            <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bordercam"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/bannerImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="fitXY"
+                    android:cropToPadding="true"
+
+                    android:adjustViewBounds="true"
+                    android:padding="10dp" />
+            </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_gravity="center"
-                android:id="@+id/userName"
-                android:visibility="gone"
-                android:paddingTop="15dp"
-                android:textColor="@color/white"
-                android:textSize="18sp"/>
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/userName"
+                    android:textColor="#005FAF"
+                    android:textSize="20sp"/>
+            </RelativeLayout>
             <LinearLayout
                 android:id="@+id/activity_landing"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
+                android:paddingTop="15dp"
                 android:layout_marginRight="10dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="0dp"
                     android:id="@+id/city"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.37"
+                    android:layout_marginLeft="10dp"
                     android:gravity="start"
-
+                    android:textSize="20sp"
                     />
 
                 <ImageView
@@ -60,8 +68,8 @@
                     android:layout_width="40dp"
                     android:layout_height="22dp"
                     android:scaleType="fitXY"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="50dp"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"
                     android:src="@drawable/location" />
 
                 <TextView
@@ -69,80 +77,173 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.37"
                     android:gravity="end"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/white"
+                    android:id="@+id/createdOn"
+                    android:textSize="20sp"
                     android:text="2021-02-01 4:30PM" />
             </LinearLayout>
-            <Spinner
-                android:id="@+id/statusSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-               android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginTop="20dp"
-                android:visibility="gone"
-                android:background="@drawable/edit_box_style"/>
             <RelativeLayout
-                android:id="@+id/mainLayout"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:id="@+id/adminView"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admin Comment"
+                    android:id="@+id/adComment"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_below="@+id/adComment"
+                    android:id="@+id/mainComment"
+                    android:layout_height="wrap_content"
+                    android:text="Hello this is admin comment"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recylerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="16dp"
-                android:orientation="vertical">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recylerView"
-                    android:layout_marginTop="32dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_above="@+id/submitButton"
-                    android:scrollbars="vertical">
-                </androidx.recyclerview.widget.RecyclerView>
+                android:scrollbars="vertical">
+            </androidx.recyclerview.widget.RecyclerView>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content">
+
                 <TextView
-                    android:id="@+id/submitButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxWidth="300dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="16dp"
+                    android:textColor="#FFFFFF"
+                    android:text="User comment"
+                   android:id="@+id/userCom"
+                    android:textSize="18sp"
+                    android:layout_marginTop="15dp"
+                    android:ellipsize="end"
+
+                    android:layout_marginLeft="10dp"
+                    android:layout_below="@+id/view"
+                    />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:text="Comment"
+
+                    android:textSize="16sp"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/textViewComment"
+                    android:ellipsize="end"
+
+                    android:layout_marginLeft="10dp"
+                    android:layout_below="@+id/userCom"
+                  />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:minHeight="50dp"
+                    android:visibility="gone"
+                    android:id="@+id/commentIcon"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:paddingRight="10dp"
+                    android:hint="Enter the comment"
+                    android:layout_below="@+id/textViewComment"
+                    android:background="@drawable/rectangle_box"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="15dp"
+                    android:text="Status history"
+                    android:textSize="16sp"
+                    android:ellipsize="end"
+
+                    android:layout_marginLeft="25dp" />
+                <TableLayout android:id="@+id/tableInvoices"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="35dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginBottom="20dp"
+                    android:padding="0dp"
+                    android:stretchColumns="*"
+                    >
+
+                        </TableLayout>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="80dp"
+                android:layout_height="wrap_content">
+                <TextView android:id="@+id/submitButton"
+                    android:layout_width="match_parent"
                     android:background="@drawable/button_red_rounded"
+                    android:maxWidth="300dp"
+                    android:text="SUBMIT"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingLeft="16dp"
                     android:layout_marginLeft="32dp"
                     android:layout_marginRight="32dp"
                     android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:text="SUBMIT"
-                    android:textAllCaps="true"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:paddingBottom="10dp"/>
             </RelativeLayout>
+
+
         </LinearLayout>
-    <ImageView
-        android:id="@+id/cameraImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:paddingLeft="32dp"
-        android:layout_centerHorizontal="true"
-        android:paddingRight="32dp"
-        android:alpha="0.5"
-        android:layout_marginTop="72dp"
-        android:src="@drawable/camera"/>
-
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/navigation"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_alignParentBottom="true"
-            app:itemTextColor="@color/white"
-            app:itemIconTint="@color/colorFooter"
-            app:itemIconSize="40dp"
-            android:background="@color/colorPrimary"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/navigation" />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#2a7cce"
-            android:layout_above="@+id/navigation"/>
+    </ScrollView>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/cameraImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitXY"
+            android:alpha="1.5"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/camera"
+            />
+    </RelativeLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        app:itemTextColor="@color/white"
+        app:itemIconTint="@color/colorFooter"
+        app:itemIconSize="40dp"
+        android:background="@color/colorPrimary"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/navigation" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2a7cce"
+        android:layout_above="@+id/navigation"/>
     <RelativeLayout
         android:id="@+id/progressBar"
         android:layout_width="match_parent"

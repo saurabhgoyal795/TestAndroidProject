@@ -22,7 +22,6 @@ import com.averda.online.login.LoginActivity;
 import com.averda.online.server.ServerApi;
 import com.averda.online.utils.Utils;
 import com.averda.online.views.AnimationListener;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 

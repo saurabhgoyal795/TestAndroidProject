@@ -100,6 +100,7 @@ public class LogoutActivity extends AppCompatActivity {
 //        Utils.deleteObject(this, "books");
 //        Utils.deleteObject(this, "seriesDetails");
         Preferences.remove(this, Preferences.KEY_IS_NEW_USER);
+        Preferences.remove(this, Preferences.KEY_IS_LOGIN_COMPLTED);
         Preferences.remove(this, Preferences.KEY_LOGIN_TYPE);
         new Thread(new Runnable() {
             @Override
