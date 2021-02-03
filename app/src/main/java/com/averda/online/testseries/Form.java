@@ -5,14 +5,19 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -59,10 +64,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -103,6 +114,8 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
     LinearLayout locationDetail;
     RelativeLayout adminLayout;
     EditText commentIcon;
+    private static final int CAMERA_REQUEST = 1888;
+    String PICTURE_PATH = "/Profile Picture/";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -362,6 +375,8 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
             try {
                 startActivityForResult(galleryIntent,
                         RESULT_LOAD_IMG);
+//                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(cameraIntent, CAMERA_REQUEST);
             } catch (ActivityNotFoundException e) {
                 if (Utils.isDebugModeOn) {
                     e.printStackTrace();
@@ -373,16 +388,20 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void checkForPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasGetAccountsPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (hasGetAccountsPermission != PackageManager.PERMISSION_GRANTED) {
+            int hasGetAccountsPermission = checkSelfPermission(Manifest.permission.CAMERA );
+            int hasGetAccountsPermission2 = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            if (hasGetAccountsPermission != PackageManager.PERMISSION_GRANTED && hasGetAccountsPermission2 != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_CODE_ASK_PERMISSIONS);
             } else {
                 Intent galleryIntent = new Intent(
                         Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 try {
+//                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
                     startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
                 } catch (ActivityNotFoundException e) {
                     if (Utils.isDebugModeOn) {
@@ -405,13 +424,15 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
                                 Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         try {
+//                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                            startActivityForResult(cameraIntent, CAMERA_REQUEST);
                             startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
                         } catch (ActivityNotFoundException e) {
                             if (Utils.isDebugModeOn) {
                                 e.printStackTrace();
                             }
                         }
-                    } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    } else if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                         showWhyWeNeedPermissionDialog(R.string.perm_readexternal_why_we_need_message);
                     } else {
                         showEnablePermissionInSettingsDialog(R.string.perm_readexternal_go_to_settings_message);
@@ -471,14 +492,28 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMG) {
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            bannerImage.setImageBitmap(photo);
+            String savePath1 = getFilesDir() + PICTURE_PATH + "images/"
+                    + "profile_picture.png";
+            saveBitmap(photo, savePath1);
+            imagePath = savePath1;
+            // CALL THIS METHOD TO GET THE ACTUAL PATH
+        }else if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == Activity.RESULT_OK && null != data) {
                 try {
                     final Uri selectedImage = data.getData();
-                    CropImage.activity(selectedImage)
-                            .setGuidelines(CropImageView.Guidelines.ON)
-                            .setAspectRatio(1, 1)
-                            .start(this);
+                    Bitmap photo = getBitmapFromUri(selectedImage);
+                    bannerImage.setImageBitmap(photo);
+                    String savePath1 = getFilesDir() + PICTURE_PATH + "images/"
+                            + "profile_picture.png";
+                    saveBitmap(photo, savePath1);
+                    imagePath = savePath1;
+//                    CropImage.activity(selectedImage)
+//                            .setGuidelines(CropImageView.Guidelines.ON)
+//                            .setAspectRatio(1, 1)
+//                            .start(this);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -523,6 +558,57 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
             }
         }
     }
+
+    private Boolean saveBitmap(Bitmap BitmapImage, String savePath) {
+        FileOutputStream fos = null;
+        try {
+            File file = new File(savePath);
+            file.delete();
+            file.getParentFile().mkdirs();
+            if (!file.exists())
+                file.createNewFile();
+            fos = new FileOutputStream(file);
+            BitmapImage.compress(Bitmap.CompressFormat.JPEG, 70, fos);
+            fos.flush();
+            fos.close();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image; }
+
+
+    public String getPath(Uri uri) {
+        // just some safety built in
+        if( uri == null ) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        // try to retrieve the image from the media store first
+        // this will only work for images selected from gallery
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        if( cursor != null ){
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(column_index);
+            cursor.close();
+            return path;
+        }
+        // this is our fallback here
+        return uri.getPath();
+    }
+
+
+
 
     public boolean updateStatus() {
         JSONObject params = new JSONObject();
@@ -572,7 +658,22 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
 
 
     public boolean uploadProfileImage(String filePath) {
-        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        if (adapter.getItemCheckedList().trim().equalsIgnoreCase("")){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "Please select atleast from different options", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return false ;
+
+        }
+            runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+            }
+        });
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .connectTimeout(60, TimeUnit.SECONDS)
@@ -680,10 +781,53 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
         }
     }
 
+    private  File getOutputMediaFile(int type){
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MyApplication");
+
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == 1){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_"+ timeStamp + ".png");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
         }
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, ""+(int)(new Date().getTime()/1000), null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        String path = "";
+        if (getContentResolver() != null) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                path = cursor.getString(idx);
+                cursor.close();
+            }
+        }
+        return path;
     }
 
     @Override
@@ -698,6 +842,8 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
             statusId = "4";
         }
     }
+
+
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
