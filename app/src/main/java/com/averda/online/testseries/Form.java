@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -369,14 +371,8 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkForPermissions();
         } else {
-            Intent galleryIntent = new Intent(
-                    Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             try {
-                startActivityForResult(galleryIntent,
-                        RESULT_LOAD_IMG);
-//                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                selectImage();
             } catch (ActivityNotFoundException e) {
                 if (Utils.isDebugModeOn) {
                     e.printStackTrace();
@@ -396,13 +392,8 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
                         new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_CODE_ASK_PERMISSIONS);
             } else {
-                Intent galleryIntent = new Intent(
-                        Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 try {
-//                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                    startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+                    selectImage();
                 } catch (ActivityNotFoundException e) {
                     if (Utils.isDebugModeOn) {
                         e.printStackTrace();
@@ -412,6 +403,8 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
         }
     }
 
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -420,13 +413,8 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
             switch (requestCode) {
                 case REQUEST_CODE_ASK_PERMISSIONS: {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Intent galleryIntent = new Intent(
-                                Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         try {
-//                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                            startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                            startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+                            selectImage();
                         } catch (ActivityNotFoundException e) {
                             if (Utils.isDebugModeOn) {
                                 e.printStackTrace();
@@ -841,6 +829,48 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
         }else  if(position==3){
             statusId = "4";
         }
+    }
+
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+
+        TextView title = new TextView(getApplicationContext());
+        title.setText("Add Photo!");
+        title.setBackgroundColor(Color.BLACK);
+        title.setPadding(10, 15, 15, 10);
+        title.setGravity(Gravity.CENTER);
+        title.setTextColor(Color.WHITE);
+        title.setTextSize(22);
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                Form.this);
+
+
+
+        builder.setCustomTitle(title);
+
+        // builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                } else if (items[item].equals("Choose from Library")) {
+                    Intent galleryIntent = new Intent(
+                            Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
     }
 
 
