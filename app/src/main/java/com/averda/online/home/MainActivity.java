@@ -161,7 +161,12 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_menu, menu);
+        if(isAdmin){
+            getMenuInflater().inflate(R.menu.admin_menu, menu);
+        }else{
+            getMenuInflater().inflate(R.menu.home_menu, menu);
+        }
+
         defaultMenu = menu;
         return true;
     }
@@ -181,7 +186,7 @@ public class MainActivity extends ZTAppCompatActivity implements View.OnClickLis
 
     private void openNewForm(){
         if(isAdmin){
-            startActivity(new Intent(this, NewUser.class));
+            startActivity(new Intent(this, UserList.class));
         }else{
             startActivity(new Intent(this, Form.class));
         }

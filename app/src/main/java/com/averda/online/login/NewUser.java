@@ -9,6 +9,8 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -27,8 +29,10 @@ import androidx.appcompat.app.AlertDialog;
 import com.averda.online.common.ZTAppCompatActivity;
 import com.averda.online.home.MainActivity;
 import com.averda.online.R;
+import com.averda.online.home.UserList;
 import com.averda.online.preferences.Preferences;
 import com.averda.online.server.ServerApi;
+import com.averda.online.testseries.Form;
 import com.averda.online.utils.Utils;
 
 import org.json.JSONArray;
@@ -38,6 +42,7 @@ import java.util.ArrayList;
 
 public class NewUser extends ZTAppCompatActivity implements View.OnClickListener {
     private EditText email;
+    private TextView deleteUser;
     private EditText password;
     private EditText name;
     private EditText lastName;
@@ -52,13 +57,16 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
     private EditText city;
     private EditText country;
     private EditText organization;
-
+    Menu defaultMenu;
+    private JSONObject itemObj;
+    private boolean isNewUser = true;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         metrics = Utils.getMetrics(this);
         setContentView(R.layout.activity_login);
         email = findViewById(R.id.email);
+        deleteUser = findViewById(R.id.deleteUser);
         password = findViewById(R.id.password);
         name = findViewById(R.id.name);
         lastName = findViewById(R.id.lastName);
@@ -75,6 +83,79 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
         passwordVisibleIcon.setOnClickListener(this);
         deviceType = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         setNewUserLayout();
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            String item = bundle.getString("item");
+            try {
+                isNewUser = false;
+                itemObj = new JSONObject(item);
+                 name.setText(itemObj.optString("first_name"));
+                 lastName.setText(itemObj.optString("last_name"));
+                email.setText(itemObj.optString("email"));
+                email.setEnabled(false);
+                phone.setText(itemObj.optString("phone"));
+                city.setText(itemObj.optString("city"));
+                country.setText(itemObj.optString("country"));
+                organization.setText(itemObj.optString("organization"));
+                String savePass = Utils.userPass(getApplicationContext());
+                password.setText(savePass);
+                password.setEnabled(false);
+                ((TextView) findViewById(R.id.loginButton)).setText("Update Profile");
+                ((TextView) findViewById(R.id.loginMode)).setText("Edit User");
+            } catch (Exception e) {
+                if (Utils.isDebugModeOn) {
+                    e.printStackTrace();
+                }
+            }
+        }else{
+            ((TextView) findViewById(R.id.loginButton)).setText(R.string.singup);
+            ((TextView) findViewById(R.id.loginMode)).setText(R.string.singup);
+            ((TextView) findViewById(R.id.deleteUser)).setVisibility(View.INVISIBLE);
+        }
+        deleteUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteUser(itemObj.optString("id"));
+            }
+        });
+    }
+
+    public  void deleteUser(String id){
+        JSONObject params = new JSONObject();
+        try{
+            boolean isAdmin = Utils.isAdmin(getApplicationContext());
+            params.put("user_id", id);
+        }catch (Exception e){
+            if(Utils.isDebugModeOn){
+                e.printStackTrace();
+            }
+        }
+        ServerApi.callServerApi(getApplicationContext(), ServerApi.BASE_URL, "deleteuser", params, new ServerApi.CompleteListener() {
+            @Override
+            public void response(JSONObject response) {
+                if(Utils.isActivityDestroyed(NewUser.this)){
+                    return;
+                }
+                findViewById(R.id.progressBar).setVisibility(View.GONE);
+                String statusCode = response.optString("success");
+                boolean status = response.optBoolean("success");
+                if("true"  == statusCode || status) {
+                    Intent intent = new Intent(NewUser.this, UserList.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void error(String error) {
+                if(Utils.isActivityDestroyed(NewUser.this)){
+                    return;
+                }
+                findViewById(R.id.progressBar).setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -102,8 +183,7 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
         findViewById(R.id.orgainizationLayout).setVisibility(View.VISIBLE);
 
         findViewById(R.id.newUser).setVisibility(View.GONE);
-        ((TextView) findViewById(R.id.loginButton)).setText(R.string.singup);
-        ((TextView) findViewById(R.id.loginMode)).setText(R.string.singup);
+
     }
 
 
@@ -116,15 +196,50 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
         }
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_menu, menu);
+        defaultMenu = menu;
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (mDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+        switch (item.getItemId()) {
+            case R.id.formOpen:
+                openNewForm();
+                return true;
+        }
+        return (super.onOptionsItemSelected(item));
+    }
+
+    private void openNewForm(){
+        startActivity(new Intent(this, NewUser.class));
+
+    }
+
     private void signUp() {
         JSONObject params = new JSONObject();
+        String apiUrl = "";
         try{
             params.put("first_name", name.getText().toString().trim());
             params.put("last_name", lastName.getText().toString().trim());
             params.put("phone", phone.getText().toString().trim());
-            params.put("email", email.getText().toString().trim());
-            params.put("EmailID", email.getText().toString().trim());
-            params.put("password", password.getText().toString().trim());
+            if(isNewUser){
+                params.put("email", email.getText().toString().trim());
+                params.put("EmailID", email.getText().toString().trim());
+                params.put("password", password.getText().toString().trim());
+                apiUrl =  "createuser";
+            }else{
+                apiUrl =  "updateprofile";
+                params.put("user_id",  Utils.getStudentId(getApplicationContext()));
+            }
+
+
             params.put("city", city.getText().toString().trim());
             params.put("country", country.getText().toString().trim());
             params.put("organization", organization.getText().toString().trim());
@@ -135,7 +250,7 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
                 e.printStackTrace();
             }
         }
-        ServerApi.callServerApi(this, ServerApi.BASE_URL, "createuser", params, new ServerApi.CompleteListener() {
+        ServerApi.callServerApi(this, ServerApi.BASE_URL, apiUrl, params, new ServerApi.CompleteListener() {
             @Override
             public void response(JSONObject response) {
                 if(Utils.isActivityDestroyed(NewUser.this)){

@@ -180,10 +180,11 @@
                 <TableLayout android:id="@+id/tableInvoices"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="35dp"
+                    android:layout_marginTop="45dp"
                     android:layout_marginRight="25dp"
-                    android:layout_marginBottom="20dp"
-                    android:padding="0dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginBottom="30dp"
+                    android:padding="10dp"
                     android:stretchColumns="*"
                     >
 

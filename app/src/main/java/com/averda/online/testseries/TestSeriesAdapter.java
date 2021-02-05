@@ -2,6 +2,7 @@ package com.averda.online.testseries;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -126,9 +129,29 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
             public void onClick(View v) {
                 double lat = planItem.optJSONObject(position).optDouble("latitude");
                 double longt = planItem.optJSONObject(position).optDouble("longitude");
-                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", lat, longt);
+//                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", lat, longt);
+//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+//                context.startActivity(intent);
+                String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%f,%f (%s)", lat, longt, "");
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                context.startActivity(intent);
+                intent.setPackage("com.google.android.apps.maps");
+                try
+                {
+                    context.startActivity(intent);
+                }
+                catch(ActivityNotFoundException ex)
+                {
+                    try
+                    {
+                        Intent unrestrictedIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        context.startActivity(unrestrictedIntent);
+                    }
+                    catch(ActivityNotFoundException innerEx)
+                    {
+
+                        Toast.makeText(context, "Please install a maps application", Toast.LENGTH_LONG).show();
+                    }
+                }
             }
         });
      //   holder.layout.setBackgroundColor(Color.parseColor(planItem.optJSONObject(position).optString("status_color")));

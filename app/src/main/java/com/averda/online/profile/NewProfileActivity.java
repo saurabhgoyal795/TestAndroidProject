@@ -188,9 +188,7 @@ public class NewProfileActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onClick(View v) {
 
-                    if(checkValidity(oldPass.getText().toString(),newPass.getText().toString())){
-
-                    }
+                    if (checkValidity(oldPass.getText().toString(), newPass.getText().toString())) {
                     JSONObject params = new JSONObject();
                     try {
                         params.put("user_id", Utils.getStudentId(getApplicationContext()));
@@ -210,6 +208,7 @@ public class NewProfileActivity extends AppCompatActivity implements View.OnClic
                             Toast.makeText(getApplicationContext(), "Successfully Changed Password", Toast.LENGTH_LONG).show();
                             dialog.dismiss();
                         }
+
                         @Override
                         public void error(String error) {
                             dialog.dismiss();
@@ -220,6 +219,7 @@ public class NewProfileActivity extends AppCompatActivity implements View.OnClic
                             }
                         }
                     });
+                }
                 }
             });
             builder.setView(promptsView);

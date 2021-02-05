@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,19 +12,28 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StrikethroughSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,6 +72,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -106,7 +119,9 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     LinearLayout locationDetail;
     RelativeLayout adminLayout;
     private TableLayout mTableLayout;
-
+    ArrayList<String> statusList;
+    private static final int CAMERA_REQUEST = 1888;
+    String PICTURE_PATH = "/Profile Picture/";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,36 +186,68 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                     public void onClick(View v) {
                         double lat = itemObj.optDouble("latitude");
                         double longt = itemObj.optDouble("longitude");
-//                        String add = "geo:0,0?q=:"+lat+","+longt;
-//                        Uri gmmIntentUri = Uri.parse(add);
-//                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                        mapIntent.setPackage("com.google.android.apps.maps");
-//                        startActivity(mapIntent);
-                        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", lat, longt);
+                        String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%f,%f (%s)", lat, longt, "");
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        startActivity(intent);
+                        intent.setPackage("com.google.android.apps.maps");
+                        try
+                        {
+                            startActivity(intent);
+                        }
+                        catch(ActivityNotFoundException ex)
+                        {
+                            try
+                            {
+                                Intent unrestrictedIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                                startActivity(unrestrictedIntent);
+                            }
+                            catch(ActivityNotFoundException innerEx)
+                            {
+
+                                Toast.makeText(getApplicationContext(), "Please install a maps application", Toast.LENGTH_LONG).show();
+                            }
+                        }
                     }
                 });
 
                     TableLayout tv=(TableLayout) findViewById(R.id.tableInvoices);
-                TableRow tbrow0 = new TableRow(this);
-                TextView tv1 = new TextView(this);
-                tv1.setText(" Status ");
-                tv1.setTextSize(17);
-                tv1.setTextColor(Color.WHITE);
-                tv1.setGravity(Gravity.CENTER);
-                tbrow0.addView(tv1);
-                TextView tv2 = new TextView(this);
-                tv2.setText(" Status Date ");
-                tv2.setTextSize(17);
-                tv2.setTextColor(Color.WHITE);
-                tv2.setGravity(Gravity.CENTER);
-                tbrow0.addView(tv2);
-                tv.addView(tbrow0);
                 for (int i = 0; i < userArray.length(); i++) {
+
                     String status = userArray.optJSONObject(i).optString("status_text");
+                    String statusColor = userArray.optJSONObject(i).optString("status_color");
                     String time = userArray.optJSONObject(i).optString("update_time").split("T")[0];
+                    String image = userArray.optJSONObject(i).optString("admin_image");
                     TableRow tbrow = new TableRow(this);
+
+                    if(statusColor.equals("green")){
+                        tbrow.setBackgroundResource(R.drawable.green);
+                    }else if(statusColor.equals("yellow")){
+                        tbrow.setBackgroundResource(R.drawable.yellow);
+                    }else if(statusColor.equals("blue")){
+                        tbrow.setBackgroundResource(R.drawable.blue);
+                    }else if(statusColor.equals("red")){
+                        tbrow.setBackgroundResource(R.drawable.red);
+                    }else{
+                        tbrow.setBackgroundResource(R.drawable.blue);
+                    }
+
+
+                    TableLayout.LayoutParams tableRowParams=
+                            new TableLayout.LayoutParams
+                                    (TableLayout.LayoutParams.FILL_PARENT,100);
+
+                    int leftMargin=10;
+                    int topMargin=10;
+                    int rightMargin=10;
+                    int bottomMargin=2;
+
+                    tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+                    tbrow.setLayoutParams(tableRowParams);
+                    ImageView imageData = new ImageView(this);
+                    Glide.with(this)
+                            .load(image)
+                            .override((int)(60), (int)(60))
+                            .into(imageData);
+                    tbrow.addView(imageData);
                     TextView t2v = new TextView(this);
                     t2v.setText(status);
                     t2v.setTextColor(Color.WHITE);
@@ -212,6 +259,12 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                     t3v.setGravity(Gravity.CENTER);
                     tbrow.addView(t3v);
                     tv.addView(tbrow);
+                    tbrow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showImage(image);
+                        }
+                    });
                 }
 
 
@@ -227,8 +280,13 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             setBannerImage();
 
 
-            if(!isAdmin){
-            findViewById(R.id.submitButton).setVisibility(View.GONE);
+            if(Utils.isAdmin(getApplicationContext())){
+                TextView btnText=(TextView)findViewById(R.id.submitButton);
+                btnText.setText("Update detail");
+                //findViewById(R.id.submitButton).setText("fg");
+           // findViewById(R.id.submitButton).setVisibility(View.GONE);
+            }else{
+                findViewById(R.id.submitButton).setVisibility(View.GONE);
             }
           //  cameraImage.setVisibility(View.VISIBLE);
         } else {
@@ -275,20 +333,26 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         findViewById(R.id.submitButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                 if(Utils.isAdmin(getApplicationContext())){
+                     //updateStatus();
+                     showDialog();
+                 }
                    // if(!isAdmin) {
-                        if (imagePath.trim().equalsIgnoreCase("")) {
-                            Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
-                        } else {
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        uploadProfileImage(imagePath);
-                                    } catch (Exception e) {
-                                    }
-                                }
-                            }).start();
-                        }
+//                if(Utils.isAdmin(getApplicationContext())) {
+//                    if (imagePath.trim().equalsIgnoreCase("")) {
+//                        Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
+//                    } else {
+//                        new Thread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                try {
+//                                    uploadProfileImage(imagePath);
+//                                } catch (Exception e) {
+//                                }
+//                            }
+//                        }).start();
+//                    }
+//                }
                   //  }
 //                    else{
 //                        updateStatus();
@@ -304,7 +368,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 e.printStackTrace();
             }
         }
-        if(isAdmin) {
+        if(Utils.isAdmin(getApplicationContext())) {
             ServerApi.callServerApi(getApplicationContext(), ServerApi.BASE_URL, "getallstatus", params, new ServerApi.CompleteListener() {
                 @Override
                 public void response(JSONObject response) {
@@ -312,7 +376,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                     boolean status = response.optBoolean("success");
                     if ("true" == statusCode || status) {
                         JSONArray data = response.optJSONArray("data");
-                        ArrayList<String> statusList = new ArrayList<>();
+                       statusList = new ArrayList<>();
                         for (int i = 0; i < data.length(); i++) {
                             try {
                                 String value = data.getJSONObject(i).getString("title");
@@ -323,12 +387,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                             }
 
                         }
-                        if (statusList.size() > 0) {
-//                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, statusList);
-//                            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//                            statusSpinner.setAdapter(dataAdapter);
-//                            statusSpinner.setOnItemSelectedListener(TestPackageDetailsActivity.this);
-                        }
+
                     }
                 }
 
@@ -338,6 +397,46 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             });
         }
     }
+
+    public void showImage(String url) {
+        Dialog builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                //nothing;
+            }
+        });
+        int Measuredwidth = 0;
+        int Measuredheight = 0;
+        Point size = new Point();
+        WindowManager w = getWindowManager();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)    {
+            w.getDefaultDisplay().getSize(size);
+            Measuredwidth = size.x;
+            Measuredheight = size.y;
+        }else{
+            Display d = w.getDefaultDisplay();
+            Measuredwidth = d.getWidth();
+            Measuredheight = d.getHeight();
+        }
+        ImageView imageView = new ImageView(this);
+        Glide.with(this)
+                .load(url)
+                .error(R.drawable.camera)
+                .override((int)(Measuredwidth-50), (int)(500))
+                .placeholder(R.drawable.camera)
+                .into(imageView);
+
+
+        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        builder.show();
+    }
+
 
     public void getLocation(){
 
@@ -420,16 +519,13 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
 
     }
 
+
     private void openPhotos() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkForPermissions();
         } else {
-            Intent galleryIntent = new Intent(
-                    Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             try {
-                startActivityForResult(galleryIntent,
-                        RESULT_LOAD_IMG);
+                selectImage();
             } catch (ActivityNotFoundException e) {
                 if (Utils.isDebugModeOn) {
                     e.printStackTrace();
@@ -438,20 +534,63 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         }
     }
 
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+
+        TextView title = new TextView(getApplicationContext());
+        title.setText("Add Photo!");
+        title.setBackgroundColor(Color.BLACK);
+        title.setPadding(10, 15, 15, 10);
+        title.setGravity(Gravity.CENTER);
+        title.setTextColor(Color.WHITE);
+        title.setTextSize(22);
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                TestPackageDetailsActivity.this);
+
+
+
+        builder.setCustomTitle(title);
+
+        // builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                } else if (items[item].equals("Choose from Library")) {
+                    Intent galleryIntent = new Intent(
+                            Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void checkForPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasGetAccountsPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (hasGetAccountsPermission != PackageManager.PERMISSION_GRANTED) {
+            int hasGetAccountsPermission = checkSelfPermission(Manifest.permission.CAMERA );
+            int hasGetAccountsPermission2 = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            if (hasGetAccountsPermission != PackageManager.PERMISSION_GRANTED && hasGetAccountsPermission2 != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_CODE_ASK_PERMISSIONS);
             } else {
-                Intent galleryIntent = new Intent(
-                        Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 try {
-                    startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+                    selectImage();
                 } catch (ActivityNotFoundException e) {
                     if (Utils.isDebugModeOn) {
                         e.printStackTrace();
@@ -461,6 +600,8 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         }
     }
 
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -469,17 +610,14 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             switch (requestCode) {
                 case REQUEST_CODE_ASK_PERMISSIONS: {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Intent galleryIntent = new Intent(
-                                Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         try {
-                            startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+                            selectImage();
                         } catch (ActivityNotFoundException e) {
                             if (Utils.isDebugModeOn) {
                                 e.printStackTrace();
                             }
                         }
-                    } else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    } else if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                         showWhyWeNeedPermissionDialog(R.string.perm_readexternal_why_we_need_message);
                     } else {
                         showEnablePermissionInSettingsDialog(R.string.perm_readexternal_go_to_settings_message);
@@ -539,14 +677,28 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMG) {
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            bannerImage.setImageBitmap(photo);
+            String savePath1 = getFilesDir() + PICTURE_PATH + "images/"
+                    + "profile_picture.png";
+            saveBitmap(photo, savePath1);
+            imagePath = savePath1;
+            // CALL THIS METHOD TO GET THE ACTUAL PATH
+        }else if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == Activity.RESULT_OK && null != data) {
                 try {
                     final Uri selectedImage = data.getData();
-                    CropImage.activity(selectedImage)
-                            .setGuidelines(CropImageView.Guidelines.ON)
-                            .setAspectRatio(1, 1)
-                            .start(this);
+                    Bitmap photo = getBitmapFromUri(selectedImage);
+                    bannerImage.setImageBitmap(photo);
+                    String savePath1 = getFilesDir() + PICTURE_PATH + "images/"
+                            + "profile_picture.png";
+                    saveBitmap(photo, savePath1);
+                    imagePath = savePath1;
+//                    CropImage.activity(selectedImage)
+//                            .setGuidelines(CropImageView.Guidelines.ON)
+//                            .setAspectRatio(1, 1)
+//                            .start(this);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -557,7 +709,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                 imagePath = result.getUri().getPath();
+                imagePath = result.getUri().getPath();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -569,7 +721,6 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                                     @Override
                                     public void run() {
                                         bannerImage.setImageBitmap(myBitmap);
-                                        bannerImage.setVisibility(View.VISIBLE);
                                         cameraImage.setVisibility(View.INVISIBLE);
                                     }
                                 });
@@ -592,6 +743,129 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             }
         }
     }
+
+    private Boolean saveBitmap(Bitmap BitmapImage, String savePath) {
+        FileOutputStream fos = null;
+        try {
+            File file = new File(savePath);
+            file.delete();
+            file.getParentFile().mkdirs();
+            if (!file.exists())
+                file.createNewFile();
+            fos = new FileOutputStream(file);
+            BitmapImage.compress(Bitmap.CompressFormat.JPEG, 70, fos);
+            fos.flush();
+            fos.close();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image; }
+    androidx.appcompat.app.AlertDialog dialog;
+    private void showDialog() {
+        try {
+            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(TestPackageDetailsActivity.this);
+            LayoutInflater li = LayoutInflater.from(TestPackageDetailsActivity.this);
+            View promptsView = li.inflate(R.layout.updatedetail_alert, null);
+            Spinner  statusSpinner = findViewById(R.id.statusSpinner);
+            EditText comment = promptsView.findViewById(R.id.comment);
+            Button selectImage = promptsView.findViewById(R.id.buttonLoadPicture);
+            String savePass = Utils.userPass(getApplicationContext());
+            TextView ok = promptsView.findViewById(R.id.ok);
+            selectImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(Utils.isConnectedToInternet(getApplicationContext())) {
+                        openPhotos();
+                    }else{
+                        Toast.makeText(getApplicationContext(), getString(R.string.network_error_1), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                        if(Utils.isAdmin(getApplicationContext())) {
+                            if (imagePath.trim().equalsIgnoreCase("")) {
+                                Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
+                            } else if (comment.getText().toString().equals("")) {
+                                Toast.makeText(getApplicationContext(), "Please enter comment", Toast.LENGTH_LONG).show();
+                            } else {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            uploadProfileImage(imagePath, "hello");
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                }).start();
+                            }
+                        }
+
+
+
+
+
+//                    if (checkValidity(oldPass.getText().toString(), newPass.getText().toString())) {
+//                        JSONObject params = new JSONObject();
+//                        try {
+//                            params.put("user_id", Utils.getStudentId(getApplicationContext()));
+//                            params.put("password", newPass.getText().toString().trim());
+//                        } catch (Exception e) {
+//                            if (Utils.isDebugModeOn) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+//                        ServerApi.callServerApi(getApplicationContext(), ServerApi.BASE_URL, "updatepassword", params, new ServerApi.CompleteListener() {
+//                            @Override
+//                            public void response(JSONObject response) {
+//                                dialog.dismiss();
+//                                findViewById(R.id.progressBar).setVisibility(View.GONE);
+//                                Preferences.put(getApplicationContext(), Preferences.KEY_USER_PASSWORD, newPass.getText().toString().trim());
+//                                Toast.makeText(getApplicationContext(), "Successfully Changed Password", Toast.LENGTH_LONG).show();
+//                                dialog.dismiss();
+//                            }
+//
+//                            @Override
+//                            public void error(String error) {
+//                                dialog.dismiss();
+//                                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+//                                findViewById(R.id.progressBar).setVisibility(View.GONE);
+//                                if (Utils.isActivityDestroyed(TestPackageDetailsActivity.this)) {
+//                                    return;
+//                                }
+//                            }
+//                        });
+//                    }
+                }
+            });
+            builder.setView(promptsView);
+            dialog = builder.create();
+            if (!Utils.isActivityDestroyed(TestPackageDetailsActivity.this))
+                dialog.show();
+            if (statusList.size() > 0) {
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, statusList);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                statusSpinner.setAdapter(dataAdapter);
+                statusSpinner.setOnItemSelectedListener(TestPackageDetailsActivity.this);
+            }
+        } catch (Exception e) {
+            if (Utils.isDebugModeOn)
+                e.printStackTrace();
+        }
+    }
+
+
+
 
     public boolean updateStatus() {
         JSONObject params = new JSONObject();
@@ -640,7 +914,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     }
 
 
-    public boolean uploadProfileImage(String filePath) {
+    public boolean uploadProfileImage(String filePath,String admin_comment) {
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .connectTimeout(60, TimeUnit.SECONDS)
@@ -655,16 +929,16 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             if (tvLongitude == null) {
                 tvLongitude = "";
             }
+
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                    .addFormDataPart("request_id", String.valueOf(itemObj.getInt("id")))
                     .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
-                    .addFormDataPart("comment", adapter.getCommentText())
-                    .addFormDataPart("latitude", tvLatitude)
-                    .addFormDataPart("longitude", tvLongitude)
-                    .addFormDataPart("questions", adapter.getItemCheckedList())
+                    .addFormDataPart("admin_comment", admin_comment)
+                    .addFormDataPart("status_id", "3")
                     .addFormDataPart("image", new File(filePath).getName(), RequestBody.create(MediaType.parse(mime), new File(filePath)))
                     .build();
             okhttp3.Request request = new okhttp3.Request.Builder()
-                    .url(ServerApi.BASE_URL+"submitrequest")
+                    .url(ServerApi.BASE_URL+"updatestatus")
                     .method("POST", body)
                     .header("accept", "application/json")
                     .build();
