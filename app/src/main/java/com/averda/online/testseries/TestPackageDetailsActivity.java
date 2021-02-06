@@ -123,6 +123,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     ArrayList<String> statusList;
     private static final int CAMERA_REQUEST = 1888;
     String PICTURE_PATH = "/Profile Picture/";
+    ArrayAdapter<String> dataAdapter = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -401,6 +402,14 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                             }
 
                         }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dataAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, statusList);
+                                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            }
+                        });
 
                     }
                 }
@@ -802,7 +811,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(TestPackageDetailsActivity.this);
             LayoutInflater li = LayoutInflater.from(TestPackageDetailsActivity.this);
             View promptsView = li.inflate(R.layout.updatedetail_alert, null);
-            Spinner  statusSpinner = findViewById(R.id.statusSpinner);
+            Spinner  statusSpinner = promptsView.findViewById(R.id.statusSpinner);
             EditText comment = promptsView.findViewById(R.id.comment);
             Button selectImage = promptsView.findViewById(R.id.buttonLoadPicture);
             String savePass = Utils.userPass(getApplicationContext());
@@ -881,8 +890,6 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             if (!Utils.isActivityDestroyed(TestPackageDetailsActivity.this))
                 dialog.show();
             if (statusList.size() > 0) {
-                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, statusList);
-                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 statusSpinner.setAdapter(dataAdapter);
                 statusSpinner.setOnItemSelectedListener(TestPackageDetailsActivity.this);
             }
