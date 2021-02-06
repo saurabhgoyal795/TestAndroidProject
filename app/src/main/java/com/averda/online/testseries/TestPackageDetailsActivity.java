@@ -813,6 +813,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             View promptsView = li.inflate(R.layout.updatedetail_alert, null);
             Spinner  statusSpinner = promptsView.findViewById(R.id.statusSpinner);
             EditText comment = promptsView.findViewById(R.id.comment);
+            comment.setText(adminComment);
             Button selectImage = promptsView.findViewById(R.id.buttonLoadPicture);
             String savePass = Utils.userPass(getApplicationContext());
             TextView ok = promptsView.findViewById(R.id.ok);
