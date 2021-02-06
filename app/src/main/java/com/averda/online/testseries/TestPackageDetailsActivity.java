@@ -112,7 +112,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private String tvLatitude,tvLongitude;
     Spinner statusSpinner;
     boolean isAdmin;
-    String statusId;
+    String statusId = "1";
     String comment= "";
     String adminComment= "";
     ImageView cameraImage,location;
@@ -830,16 +830,14 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 @Override
                 public void onClick(View v) {
                         if(Utils.isAdmin(getApplicationContext())) {
-                            if (imagePath.trim().equalsIgnoreCase("")) {
-                                Toast.makeText(getApplicationContext(), "Image is blank", Toast.LENGTH_LONG).show();
-                            } else if (comment.getText().toString().equals("")) {
+                            if (comment.getText().toString().equals("")) {
                                 Toast.makeText(getApplicationContext(), "Please enter comment", Toast.LENGTH_LONG).show();
                             } else {
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
                                         try {
-                                            uploadProfileImage(imagePath, "hello");
+                                            uploadProfileImage(imagePath, comment.getText().toString());
                                         } catch (Exception e) {
                                         }
                                     }
@@ -964,12 +962,13 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             if (tvLongitude == null) {
                 tvLongitude = "";
             }
+            findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
 
             RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("request_id", String.valueOf(itemObj.getInt("id")))
                     .addFormDataPart("user_id", Utils.getStudentId(TestPackageDetailsActivity.this)+"")
                     .addFormDataPart("admin_comment", admin_comment)
-                    .addFormDataPart("status_id", "3")
+                    .addFormDataPart("status_id", statusId)
                     .addFormDataPart("image", new File(filePath).getName(), RequestBody.create(MediaType.parse(mime), new File(filePath)))
                     .build();
             okhttp3.Request request = new okhttp3.Request.Builder()
