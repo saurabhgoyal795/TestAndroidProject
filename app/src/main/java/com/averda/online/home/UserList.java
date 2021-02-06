@@ -1,17 +1,21 @@
 package com.averda.online.home;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.averda.online.R;
 import com.averda.online.server.ServerApi;
+import com.averda.online.testseries.TestPackageDetailsActivity;
 import com.averda.online.utils.Utils;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +50,27 @@ public class UserList extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        BottomNavigationView navView = findViewById(R.id.navigation);
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.navigation_home:
+                        Utils.openHome(UserList.this);
+                        break;
+                    case R.id.navigation_classes:
+                        Utils.openMyPackagesNewTask(UserList.this, 0);
+                        break;
+                    case R.id.navigation_test:
+                        Utils.openMyPackagesNewTask(UserList.this, 1);
+                        break;
+                    case R.id.navigation_profile:
+                        Utils.openMyProfileNewTask(UserList.this);
+                        break;
+                }
+                return false;
+            }
+        });
         ServerApi.callServerApi(getApplicationContext(), ServerApi.BASE_URL, "showallusers", params, new ServerApi.CompleteListener() {
             @Override
             public void response(JSONObject response) {
