@@ -108,7 +108,7 @@ public class TestSeriesAdapter extends RecyclerView.Adapter<TestSeriesAdapter.Te
         }else{
             holder.itemView.setPadding((int)(8 * metrics.density), (int)(16 * metrics.density), (int)(8 * metrics.density), 0);
         }
-        holder.dateText.setText(planItem.optJSONObject(position).optString("created_at").split("T")[0]);
+        holder.dateText.setText(planItem.optJSONObject(position).optString("update_time"));
         holder.status.setText(planItem.optJSONObject(position).optString("status_text").toUpperCase());
           if(planItem.optJSONObject(position).optString("status_color").equals("green")){
              holder.layout.setBackgroundResource(R.drawable.green);

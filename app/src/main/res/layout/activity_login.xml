@@ -301,6 +301,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/button_red_rounded"
                         android:padding="10dp"
+                        android:visibility="gone"
                         android:text="Delete USER"
                         android:textColor="@android:color/white"
                         android:gravity="center"

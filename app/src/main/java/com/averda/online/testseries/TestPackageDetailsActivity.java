@@ -99,9 +99,10 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private String pdfPath;
     private String packageName;
     private JSONObject demoTestItem;
-    RecyclerView mRecyclerView;
-    private GridLayoutManager mLayoutManager;
+    RecyclerView mRecyclerView,statusRList;
+    private GridLayoutManager mLayoutManager,mLayoutManager1;
     private TestSeriesItemAdapter adapter = null;
+    private StatusItemAdapter stAdapter = null;
     JSONArray dataArray = new JSONArray();
     JSONArray userArray = new JSONArray();
     private int RESULT_LOAD_IMG = 200;
@@ -166,7 +167,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 JSONObject  userAr = new JSONObject(itemObj.optString("users"));
                 userName.setText(itemObj.optString("status_text"));
                 city.setText(itemObj.optString("city"));
-                creted.setText(itemObj.optString("created_at").split("T")[0]);
+                creted.setText(itemObj.optString("update_time"));
                 adminComment  =  itemObj.optString("admin_comment");
                 if(adminComment.equals("")|| adminComment.equals("null")){
                     adminLayout.setVisibility(View.GONE);
@@ -209,63 +210,66 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                     }
                 });
 
-                    TableLayout tv=(TableLayout) findViewById(R.id.tableInvoices);
-                for (int i = 0; i < userArray.length(); i++) {
-
-                    String status = userArray.optJSONObject(i).optString("status_text");
-                    String statusColor = userArray.optJSONObject(i).optString("status_color");
-                    String time = userArray.optJSONObject(i).optString("update_time").split("T")[0];
-                    String image = userArray.optJSONObject(i).optString("admin_image");
-                    TableRow tbrow = new TableRow(this);
-
-                    if(statusColor.equals("green")){
-                        tbrow.setBackgroundResource(R.drawable.green);
-                    }else if(statusColor.equals("yellow")){
-                        tbrow.setBackgroundResource(R.drawable.yellow);
-                    }else if(statusColor.equals("blue")){
-                        tbrow.setBackgroundResource(R.drawable.blue);
-                    }else if(statusColor.equals("red")){
-                        tbrow.setBackgroundResource(R.drawable.red);
-                    }else{
-                        tbrow.setBackgroundResource(R.drawable.blue);
-                    }
 
 
-                    TableLayout.LayoutParams tableRowParams=
-                            new TableLayout.LayoutParams
-                                    (TableLayout.LayoutParams.FILL_PARENT,100);
-
-                    int leftMargin=10;
-                    int topMargin=10;
-                    int rightMargin=10;
-                    int bottomMargin=2;
-
-                    tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-                    tbrow.setLayoutParams(tableRowParams);
-                    ImageView imageData = new ImageView(this);
-                    Glide.with(this)
-                            .load(image)
-                            .override((int)(60), (int)(60))
-                            .into(imageData);
-                    tbrow.addView(imageData);
-                    TextView t2v = new TextView(this);
-                    t2v.setText(status);
-                    t2v.setTextColor(Color.WHITE);
-                    t2v.setGravity(Gravity.CENTER);
-                    tbrow.addView(t2v);
-                    TextView t3v = new TextView(this);
-                    t3v.setText(time);
-                    t3v.setTextColor(Color.WHITE);
-                    t3v.setGravity(Gravity.CENTER);
-                    tbrow.addView(t3v);
-                    tv.addView(tbrow);
-                    tbrow.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showImage(image);
-                        }
-                    });
-                }
+//
+//                    TableLayout tv=(TableLayout) findViewById(R.id.tableInvoices);
+//                for (int i = 0; i < userArray.length(); i++) {
+//
+//                    String status = userArray.optJSONObject(i).optString("status_text");
+//                    String statusColor = userArray.optJSONObject(i).optString("status_color");
+//                    String time = userArray.optJSONObject(i).optString("update_time").split("T")[0];
+//                    String image = userArray.optJSONObject(i).optString("admin_image");
+//                    TableRow tbrow = new TableRow(this);
+//
+//                    if(statusColor.equals("green")){
+//                        tbrow.setBackgroundResource(R.drawable.green);
+//                    }else if(statusColor.equals("yellow")){
+//                        tbrow.setBackgroundResource(R.drawable.yellow);
+//                    }else if(statusColor.equals("blue")){
+//                        tbrow.setBackgroundResource(R.drawable.blue);
+//                    }else if(statusColor.equals("red")){
+//                        tbrow.setBackgroundResource(R.drawable.red);
+//                    }else{
+//                        tbrow.setBackgroundResource(R.drawable.blue);
+//                    }
+//
+//
+//                    TableLayout.LayoutParams tableRowParams=
+//                            new TableLayout.LayoutParams
+//                                    (TableLayout.LayoutParams.FILL_PARENT,100);
+//
+//                    int leftMargin=10;
+//                    int topMargin=10;
+//                    int rightMargin=10;
+//                    int bottomMargin=2;
+//
+//                    tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+//                    tbrow.setLayoutParams(tableRowParams);
+//                    ImageView imageData = new ImageView(this);
+//                    Glide.with(this)
+//                            .load(image)
+//                            .override((int)(60), (int)(60))
+//                            .into(imageData);
+//                    tbrow.addView(imageData);
+//                    TextView t2v = new TextView(this);
+//                    t2v.setText(status);
+//                    t2v.setTextColor(Color.WHITE);
+//                    t2v.setGravity(Gravity.CENTER);
+//                    tbrow.addView(t2v);
+//                    TextView t3v = new TextView(this);
+//                    t3v.setText(time);
+//                    t3v.setTextColor(Color.WHITE);
+//                    t3v.setGravity(Gravity.CENTER);
+//                    tbrow.addView(t3v);
+//                    tv.addView(tbrow);
+//                    tbrow.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            showImage(image);
+//                        }
+//                    });
+//                }
 
 
 
@@ -322,13 +326,23 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             }
         });
         mRecyclerView = findViewById(R.id.recylerView);
+        statusRList = findViewById(R.id.recylerViewStatus);
         if (mRecyclerView != null) {
             mRecyclerView.setHasFixedSize(false);
+            statusRList.setHasFixedSize(false);
         }
+        if (statusRList != null) {
+            statusRList.setHasFixedSize(false);
+        }
+
+        statusRList.setNestedScrollingEnabled(false);
+        mLayoutManager1 = new GridLayoutManager(getApplicationContext(),1);
+        statusRList.setLayoutManager(mLayoutManager1);
 
         mRecyclerView.setNestedScrollingEnabled(false);
         mLayoutManager = new GridLayoutManager(getApplicationContext(),1);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        statusSetList(userArray);
         setList(dataArray);
         findViewById(R.id.submitButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -492,6 +506,20 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             }
         }
     }
+
+    private void statusSetList(JSONArray data){
+        if (data != null) {
+            if(stAdapter == null) {
+                stAdapter = new StatusItemAdapter(data,R.layout.statusitem, TestPackageDetailsActivity.this);
+                statusRList.setAdapter(stAdapter);
+            }else{
+                stAdapter.refreshAdapter(data);
+            }
+        }
+    }
+
+
+
 
     private void setImageViewSize(){
         imageWidth = metrics.widthPixels;

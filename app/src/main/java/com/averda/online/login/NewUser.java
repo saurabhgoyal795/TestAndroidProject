@@ -102,6 +102,7 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
                 password.setEnabled(false);
                 ((TextView) findViewById(R.id.loginButton)).setText("Update Profile");
                 ((TextView) findViewById(R.id.loginMode)).setText("Edit User");
+                ((TextView) findViewById(R.id.deleteUser)).setVisibility(View.VISIBLE);
             } catch (Exception e) {
                 if (Utils.isDebugModeOn) {
                     e.printStackTrace();
