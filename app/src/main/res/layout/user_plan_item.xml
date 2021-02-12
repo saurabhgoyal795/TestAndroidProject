@@ -53,7 +53,6 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"/>
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
@@ -66,15 +65,26 @@
                     android:layout_height="wrap_content"
                     android:textColor="#ffffff"
                     android:gravity="center_horizontal"
-                    android:text="PICKED"
-                    android:layout_gravity="start"
+                    android:text="ID: 002"
                     android:textSize="16sp"
                     android:maxLines="2"
+                    android:ellipsize="end"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp"
-                    />
-
+                    android:layout_marginRight="2dp"/>
+                <TextView
+                    android:id="@+id/created"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
+                    android:text="26-12-2021"
+                    android:gravity="right"
+                    android:textSize="16sp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"/>
             </LinearLayout>
         </LinearLayout>
 

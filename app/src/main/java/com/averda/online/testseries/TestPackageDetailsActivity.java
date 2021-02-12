@@ -114,9 +114,9 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     boolean isAdmin;
     String statusId = "1";
     String comment= "";
-    String adminComment= "";
+    String adminComment,phoneNo= "";
     ImageView cameraImage,location;
-    TextView userName,city,creted,adComment,textViewComment;
+    TextView userName,city,creted,adComment,textViewComment,formName,org,phone;
     LinearLayout locationDetail;
     RelativeLayout adminLayout;
     private TableLayout mTableLayout;
@@ -136,6 +136,12 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         userName = findViewById(R.id.userName);
         city = findViewById(R.id.city);
         creted = findViewById(R.id.createdOn);
+
+        creted = findViewById(R.id.createdOn);
+        phone = findViewById(R.id.phone);
+        formName = findViewById(R.id.formName);
+        org = findViewById(R.id.org);
+
         adComment = findViewById(R.id.mainComment);
         textViewComment = findViewById(R.id.textViewComment);
         locationDetail = findViewById(R.id.activity_landing);
@@ -165,8 +171,14 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 userArray = new JSONArray(itemObj.optString("order_status"));
                 this.setTitle("Request ID #"+itemObj.optString("id"));
                 comment  =  itemObj.optString("user_comment");
+//                org.setVisibility(View.VISIBLE);
+//                formName.setVisibility(View.VISIBLE);
                 JSONObject  userAr = new JSONObject(itemObj.optString("users"));
                 userName.setText(itemObj.optString("status_text"));
+                formName.setText((userAr.optString("first_name")+" "+(userAr.optString("last_name"))));
+                org.setText(userAr.optString("organization"));
+                phone.setText(userAr.optString("phone"));
+                phoneNo = userAr.optString("phone");
                 city.setText(itemObj.optString("city"));
                 creted.setText(itemObj.optString("update_time"));
                 adminComment  =  itemObj.optString("admin_comment");
@@ -212,69 +224,6 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                 });
 
 
-
-//
-//                    TableLayout tv=(TableLayout) findViewById(R.id.tableInvoices);
-//                for (int i = 0; i < userArray.length(); i++) {
-//
-//                    String status = userArray.optJSONObject(i).optString("status_text");
-//                    String statusColor = userArray.optJSONObject(i).optString("status_color");
-//                    String time = userArray.optJSONObject(i).optString("update_time").split("T")[0];
-//                    String image = userArray.optJSONObject(i).optString("admin_image");
-//                    TableRow tbrow = new TableRow(this);
-//
-//                    if(statusColor.equals("green")){
-//                        tbrow.setBackgroundResource(R.drawable.green);
-//                    }else if(statusColor.equals("yellow")){
-//                        tbrow.setBackgroundResource(R.drawable.yellow);
-//                    }else if(statusColor.equals("blue")){
-//                        tbrow.setBackgroundResource(R.drawable.blue);
-//                    }else if(statusColor.equals("red")){
-//                        tbrow.setBackgroundResource(R.drawable.red);
-//                    }else{
-//                        tbrow.setBackgroundResource(R.drawable.blue);
-//                    }
-//
-//
-//                    TableLayout.LayoutParams tableRowParams=
-//                            new TableLayout.LayoutParams
-//                                    (TableLayout.LayoutParams.FILL_PARENT,100);
-//
-//                    int leftMargin=10;
-//                    int topMargin=10;
-//                    int rightMargin=10;
-//                    int bottomMargin=2;
-//
-//                    tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-//                    tbrow.setLayoutParams(tableRowParams);
-//                    ImageView imageData = new ImageView(this);
-//                    Glide.with(this)
-//                            .load(image)
-//                            .override((int)(60), (int)(60))
-//                            .into(imageData);
-//                    tbrow.addView(imageData);
-//                    TextView t2v = new TextView(this);
-//                    t2v.setText(status);
-//                    t2v.setTextColor(Color.WHITE);
-//                    t2v.setGravity(Gravity.CENTER);
-//                    tbrow.addView(t2v);
-//                    TextView t3v = new TextView(this);
-//                    t3v.setText(time);
-//                    t3v.setTextColor(Color.WHITE);
-//                    t3v.setGravity(Gravity.CENTER);
-//                    tbrow.addView(t3v);
-//                    tv.addView(tbrow);
-//                    tbrow.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            showImage(image);
-//                        }
-//                    });
-//                }
-
-
-
-
             }catch (Exception e){
                 if(Utils.isDebugModeOn){
                     e.printStackTrace();
@@ -288,6 +237,16 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             if(Utils.isAdmin(getApplicationContext())){
                 TextView btnText=(TextView)findViewById(R.id.submitButton);
                 btnText.setText("Update detail");
+                org.setVisibility(View.VISIBLE);
+                formName.setVisibility(View.VISIBLE);
+                phone.setVisibility(View.VISIBLE);
+                phone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String number = phoneNo;
+                        dialContactPhone(phoneNo);
+                    }
+                });
                 //findViewById(R.id.submitButton).setText("fg");
            // findViewById(R.id.submitButton).setVisibility(View.GONE);
             }else{
@@ -421,6 +380,10 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         }
     }
 
+    private void dialContactPhone(final String phoneNumber) {
+        startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null)));
+    }
+
     public void showImage(String url) {
         Dialog builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -435,7 +398,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         int Measuredwidth = 0;
         int Measuredheight = 0;
         Point size = new Point();
-        WindowManager w = getWindowManager();
+        WindowManager w = this.getWindowManager();
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)    {
             w.getDefaultDisplay().getSize(size);
             Measuredwidth = size.x;
@@ -449,7 +412,7 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
         Glide.with(this)
                 .load(url)
                 .error(R.drawable.camera)
-                .override((int)(Measuredwidth-50), (int)(500))
+                .override((int)(Measuredheight-100), (int)(Measuredwidth-20))
                 .placeholder(R.drawable.camera)
                 .into(imageView);
 
@@ -508,10 +471,10 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
     private void setList(JSONArray data){
         if (data != null) {
             if(adapter == null) {
-                adapter = new TestSeriesItemAdapter(data,comment,isAdmin,"",R.layout.plan_item, this);
+                adapter = new TestSeriesItemAdapter(data,comment,true,"",R.layout.plan_item, this);
                 mRecyclerView.setAdapter(adapter);
             }else{
-                adapter.refreshAdapter(data,comment,isAdmin,adminComment);
+                adapter.refreshAdapter(data,comment,true,adminComment);
             }
         }
     }
@@ -1011,12 +974,13 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
             if(Utils.isDebugModeOn){
                 e.printStackTrace();
             }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), "Form request not updated, try again", Toast.LENGTH_SHORT).show();
-                }
-            });
+            uploadProfileImage(filePath,admin_comment);
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Toast.makeText(getApplicationContext(), "Form request not updated, try again", Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
         return false;
     }
@@ -1055,7 +1019,16 @@ public class TestPackageDetailsActivity extends ZTAppCompatActivity implements V
                     .placeholder(R.drawable.waste_material)
                     .into(bannerImage);
         }
+        bannerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showImage(imagePath);
+            }
+        });
     }
+
+
+
 
     @Override
     public void onClick(View v) {

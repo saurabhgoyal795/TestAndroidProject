@@ -38,7 +38,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
     protected class UserListViewHolder extends RecyclerView.ViewHolder {
         private LinearLayout layout;
         private TextView userName;
-        private TextView city;
+        private TextView city,created;
         private TextView orgnization;
         public UserListViewHolder(View v) {
             super(v);
@@ -46,6 +46,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
             userName = v.findViewById(R.id.userName);
             city = v.findViewById(R.id.city);
             orgnization = v.findViewById(R.id.orgnization);
+            created = v.findViewById(R.id.created);
         }
     }
 
@@ -75,6 +76,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserLi
             holder.itemView.setPadding((int)(8 * metrics.density), (int)(16 * metrics.density), (int)(8 * metrics.density), 0);
         }
         holder.city.setText(planItem.optJSONObject(position).optString("city"));
+        holder.created.setText(planItem.optJSONObject(position).optString("created_at"));
         holder.orgnization.setText(planItem.optJSONObject(position).optString("organization"));
         //   holder.layout.setBackgroundColor(Color.parseColor(planItem.optJSONObject(position).optString("status_color")));
         holder.itemView.setOnClickListener(new View.OnClickListener() {

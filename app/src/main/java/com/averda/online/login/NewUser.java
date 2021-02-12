@@ -60,6 +60,7 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
     Menu defaultMenu;
     private JSONObject itemObj;
     private boolean isNewUser = true;
+    private String userId,emailId="";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +93,9 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
                  name.setText(itemObj.optString("first_name"));
                  lastName.setText(itemObj.optString("last_name"));
                 email.setText(itemObj.optString("email"));
+                emailId = itemObj.optString("email");
                 email.setEnabled(false);
+                userId = itemObj.optString("id");
                 phone.setText(itemObj.optString("phone"));
                 city.setText(itemObj.optString("city"));
                 country.setText(itemObj.optString("country"));
@@ -146,6 +149,8 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
                     startActivity(intent);
                     finish();
                 }
+                String message = response.optString("message");
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -227,24 +232,31 @@ public class NewUser extends ZTAppCompatActivity implements View.OnClickListener
         JSONObject params = new JSONObject();
         String apiUrl = "";
         try{
-            params.put("first_name", name.getText().toString().trim());
-            params.put("last_name", lastName.getText().toString().trim());
-            params.put("phone", phone.getText().toString().trim());
+
+
             if(isNewUser){
+                params.put("first_name", name.getText().toString().trim());
+                params.put("last_name", lastName.getText().toString().trim());
                 params.put("email", email.getText().toString().trim());
                 params.put("EmailID", email.getText().toString().trim());
                 params.put("password", password.getText().toString().trim());
+                params.put("phone", phone.getText().toString().trim());
                 apiUrl =  "createuser";
             }else{
                 apiUrl =  "updateprofile";
-                params.put("user_id",  Utils.getStudentId(getApplicationContext()));
+
+                params.put("user_id",  userId);
+                params.put("first_name", name.getText().toString().trim());
+                params.put("last_name", lastName.getText().toString().trim());
+                params.put("phone", phone.getText().toString().trim());
+                params.put("email", emailId);
+
             }
 
 
             params.put("city", city.getText().toString().trim());
             params.put("country", country.getText().toString().trim());
             params.put("organization", organization.getText().toString().trim());
-            params.put("device_info", Utils.getPhoneDetail());
             params.put("device_id", deviceType);
         }catch (Exception e){
             if(Utils.isDebugModeOn){

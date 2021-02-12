@@ -334,10 +334,10 @@ public class Form extends ZTAppCompatActivity implements View.OnClickListener, A
     private void setList(JSONArray data){
         if (data != null) {
             if(adapter == null) {
-                adapter = new TestSeriesItemAdapter(data,comment,isAdmin,"",R.layout.plan_item, this);
+                adapter = new TestSeriesItemAdapter(data,comment,false,"",R.layout.plan_item, this);
                 mRecyclerView.setAdapter(adapter);
             }else{
-                adapter.refreshAdapter(data,comment,isAdmin,adminComment);
+                adapter.refreshAdapter(data,comment,false,adminComment);
             }
         }
     }

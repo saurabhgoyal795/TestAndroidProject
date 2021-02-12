@@ -106,7 +106,56 @@
                     android:textColor="@color/white"
                     android:textSize="15sp"/>
             </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/activity_landings"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:paddingTop="15dp"
+                android:layout_marginRight="10dp"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="0dp"
+                    android:id="@+id/formName"
+                    android:textColor="@color/white"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.37"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="start"
+                    android:visibility="gone"
+                    android:text="afdadf"
+                    android:textSize="20sp"
+
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:id="@+id/phone"
+                    android:visibility="gone"
+                    android:textColor="@color/white"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.37"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:text="afdadf"
+                    android:textSize="20sp"
+
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.37"
+                    android:visibility="gone"
+                    android:gravity="end"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/white"
+                    android:id="@+id/org"
+                    android:text="afdadfsd"
+                    android:textSize="20sp"
+
+                   />
+            </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recylerView"
                 android:layout_width="match_parent"

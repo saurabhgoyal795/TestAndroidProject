@@ -89,6 +89,11 @@ public class TestSeriesItemAdapter extends RecyclerView.Adapter<TestSeriesItemAd
             holder.checkBox.setChecked(false);
             holder.checkBox.setButtonDrawable(R.drawable.checkbox);
         }
+        if(adminStatus){
+            holder.checkBox.setEnabled(false);
+        }else{
+            holder.checkBox.setEnabled(true);
+        }
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
              public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
